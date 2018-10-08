@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ViewCell xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Pal.View.CustomViewCell.OutgoingViewCell">
+
+    <Frame BackgroundColor="Gray"
+           Padding="10"
+           HasShadow="False"
+           Margin="80,10,10,10"
+           HorizontalOptions="EndAndExpand"
+               CornerRadius="15">
+        <StackLayout Orientation="Horizontal">
+            
+            <Label Text="{Binding Text}"
+                        TextColor="White"/>
+            <Label Text="{Binding DataTime}"
+                        TextColor="WhiteSmoke"/>
+        </StackLayout>
+    </Frame>
+</ViewCell>
