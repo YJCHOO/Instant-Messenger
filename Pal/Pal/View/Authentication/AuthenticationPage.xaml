@@ -12,13 +12,15 @@
             
             <Entry Text="{Binding EmailText}" 
                    Placeholder="Email" 
-                   HorizontalOptions="FillAndExpand"/>
+                   HorizontalOptions="FillAndExpand"
+                   />
             
 
             <Entry Text="{Binding PassText}" 
                    Placeholder="Password" 
                    HorizontalOptions="FillAndExpand" 
-                   IsPassword="True"/>
+                   IsPassword="True"
+                   />
 
             <Button Text="Login" 
                     Command="{Binding OnLoginCommand}"

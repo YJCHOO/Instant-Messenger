@@ -6,8 +6,8 @@ namespace Pal.Model
 {
     public class User
     {
-        public String UserName { get; set; }
-        public String UserImg { get; set; }
+        public string UserName { get; set; }
+        public string UserImg { get; set; }
 
         public User(string userName)
         {

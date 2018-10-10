@@ -1,6 +1,8 @@
 ﻿using Pal.Service;
+using Pal.View.Authentication;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -9,8 +11,9 @@ namespace Pal.ViewModel
     class AuthenticationViewModel : INotifyPropertyChanged
     {
 
-        public String EmailText { get; set; }
-        public String PassText { get; set; }
+        public string EmailText { get; set; }
+        public string PassText { get; set; }
+        public string Username { get; set; }
         public String ErrorMsg { get; set; }
         public ICommand OnLoginCommand { get; set; }
         public ICommand OnRegisterCommand { get; set; }
@@ -25,6 +28,7 @@ namespace Pal.ViewModel
             OnLoginCommand = new Command(async() =>
             {
                 if(!IsValidEmailPass()){
+                    DisplayAlert();
                     return;  
                 }
 
@@ -33,6 +37,7 @@ namespace Pal.ViewModel
                     TempUser = await DependencyService.Get<IFirebaseAuthenticator>().LoginWithEmailPass(EmailText, PassText);
                     OnPropertyChanged("TempUser");
                     UserSetting.UserToken = TempUser;
+
                 }
                 catch (Exception Ex) {
                     FirebaseException(Ex.ToString());
@@ -43,6 +48,7 @@ namespace Pal.ViewModel
             {
                 if (!IsValidEmailPass())
                 {
+                    DisplayAlert();
                     return;
                 }
 
@@ -51,6 +57,8 @@ namespace Pal.ViewModel
                     TempUser = await DependencyService.Get<IFirebaseAuthenticator>().RegisterWithEmailPassword(EmailText, PassText);
                     OnPropertyChanged("TempUser");
                     UserSetting.UserToken = TempUser;
+                    Debug.Write(TempUser);
+                    DependencyService.Get<IFirebaseDatabase>().SetUser(EmailText, "hahaha");
                 }
                 catch (Exception Ex) {
                     FirebaseException(Ex.ToString());
@@ -62,7 +70,7 @@ namespace Pal.ViewModel
             if (ExceptionMsg.Contains("FirebaseNetworkException"))
             {
                 ErrorMsg = "No internet Connection. Please Try again.";
-                
+
             }
             else if (ExceptionMsg.Contains("FirebaseAuthInvalidCredentialsException"))
             {
@@ -71,12 +79,18 @@ namespace Pal.ViewModel
             else if (ExceptionMsg.Contains("FirebaseAuthInvalidUserException"))
             {
                 ErrorMsg = "Email not found. Please register first.";
-               
+
             }
-            else if (ExceptionMsg.Contains("FirebaseAuthUserCollisionException")) {
+            else if (ExceptionMsg.Contains("FirebaseAuthUserCollisionException"))
+            {
                 ErrorMsg = "The email address is already registered. Please login with this email address.";
             }
-            OnPropertyChanged("ErrorMsg");
+            else
+            {
+                ErrorMsg = ExceptionMsg;
+            }
+            DisplayAlert();
+            
         }
 
         private bool IsValidEmailPass() {
@@ -84,15 +98,18 @@ namespace Pal.ViewModel
             if (String.IsNullOrEmpty(TempStr))
             {
                 ErrorMsg = "";
-                OnPropertyChanged("ErrorMsg");
                 return true;
             }
             else
             {
                 ErrorMsg = TempStr;
-                OnPropertyChanged("ErrorMsg");
                 return false;
             }
+        }
+
+        private async void DisplayAlert() {
+            if(!string.IsNullOrEmpty(ErrorMsg))
+            await App.Current.MainPage.DisplayAlert("Something happen....", ErrorMsg, "Ok");
         }
 
         public void OnPropertyChanged(String Property)

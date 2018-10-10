@@ -17,15 +17,15 @@ namespace Pal
             InitializeComponent();
 
 
-            if (!UserSetting.IsUserSet)
-            {
+            //if (!UserSetting.IsUserSet)
+            //{
                 MainPage = new NavigationPage(new AuthenticationPage());
 
-            }
-            else
-            {
-                MainPage = new NavigationPage(new ChatsPage());
-            }
+            //}
+            //else
+            //{
+            //    MainPage = new NavigationPage(new ChatsPage());
+            //}
         }
 
         protected override void OnStart()
