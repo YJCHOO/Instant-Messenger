@@ -28,10 +28,10 @@ namespace Pal.Droid
 
         private void InitiFirebaseAuth() {
             var options = new FirebaseOptions.Builder()
-                .SetApplicationId("1:561500824016:android:3e9713b097aad310")
-                .SetApiKey("AIzaSyAuE_feaACvYJC9bhcLUoqeRlKLpbf4fq0")
-                .SetDatabaseUrl("https://palproject-127b0.firebaseio.com/")
-                .SetProjectId("palproject-127b0")
+                .SetApplicationId("")
+                .SetApiKey("")
+                .SetDatabaseUrl("")
+                .SetProjectId("")
                 .Build();
 
             if (app == null) {
