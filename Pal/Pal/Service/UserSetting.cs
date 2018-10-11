@@ -15,15 +15,26 @@ namespace Pal.Service
             }
         }
 
-        public static bool IsUserSet => AppSettings.Contains(nameof(UserToken));
+        public static bool IsUserEmail => AppSettings.Contains(nameof(UserEmail));
+        public static bool IsUserName => AppSettings.Contains(nameof(UserName));
 
-        public static string UserToken
+        public static string UserEmail
         {
-            get => AppSettings.GetValueOrDefault(nameof(UserToken),string.Empty);
-            set => AppSettings.AddOrUpdateValue(nameof(UserToken), value);
+            get => AppSettings.GetValueOrDefault(nameof(UserEmail),string.Empty);
+            set => AppSettings.AddOrUpdateValue(nameof(UserEmail), value);
         }
 
-        public static void RemoveUserToken() => AppSettings.Remove(nameof(UserToken));
+        public static string UserName {
+            get => AppSettings.GetValueOrDefault(nameof(UserName), string.Empty);
+            set => AppSettings.AddOrUpdateValue(nameof(UserName), value);
+
+        }
+
+        public static void RemoveUser()
+        {
+            AppSettings.Remove(nameof(UserEmail));
+            AppSettings.Remove(nameof(UserName));
+        }
 
         public static void ClearEverything()
         {

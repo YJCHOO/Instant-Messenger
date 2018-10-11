@@ -8,7 +8,7 @@ using Xamarin.Forms;
 
 namespace Pal.ViewModel
 {
-    class AuthenticationViewModel : INotifyPropertyChanged
+    class AuthenticationViewModel
     {
 
         public string EmailText { get; set; }
@@ -17,7 +17,6 @@ namespace Pal.ViewModel
         public String ErrorMsg { get; set; }
         public ICommand OnLoginCommand { get; set; }
         public ICommand OnRegisterCommand { get; set; }
-        public event PropertyChangedEventHandler PropertyChanged;
         private string TempUser;
         private readonly Validator validator = new Validator();
 
@@ -35,9 +34,9 @@ namespace Pal.ViewModel
                 try
                 {
                     TempUser = await DependencyService.Get<IFirebaseAuthenticator>().LoginWithEmailPass(EmailText, PassText);
-                    OnPropertyChanged("TempUser");
-                    UserSetting.UserToken = TempUser;
-
+                    DependencyService.Get<IFirebaseDatabase>().GetUser(EmailText);
+                    UserSetting.UserEmail = TempUser;
+                    await App.Current.MainPage.Navigation.PushAsync(new UsernameSetupPage());
                 }
                 catch (Exception Ex) {
                     FirebaseException(Ex.ToString());
@@ -55,10 +54,11 @@ namespace Pal.ViewModel
                 try
                 {
                     TempUser = await DependencyService.Get<IFirebaseAuthenticator>().RegisterWithEmailPassword(EmailText, PassText);
-                    OnPropertyChanged("TempUser");
-                    UserSetting.UserToken = TempUser;
+                    UserSetting.UserEmail = TempUser;
                     Debug.Write(TempUser);
-                    DependencyService.Get<IFirebaseDatabase>().SetUser(EmailText, "hahaha");
+                    DependencyService.Get<IFirebaseDatabase>().SetUser(EmailText, "");
+                    await App.Current.MainPage.Navigation.PushAsync(new UsernameSetupPage());
+
                 }
                 catch (Exception Ex) {
                     FirebaseException(Ex.ToString());
@@ -112,10 +112,6 @@ namespace Pal.ViewModel
             await App.Current.MainPage.DisplayAlert("Something happen....", ErrorMsg, "Ok");
         }
 
-        public void OnPropertyChanged(String Property)
-        {
-            PropertyChanged(this, new PropertyChangedEventArgs(Property));
-        }
 
     }
 }

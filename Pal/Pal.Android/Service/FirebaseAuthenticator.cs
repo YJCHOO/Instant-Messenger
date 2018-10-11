@@ -16,14 +16,14 @@ namespace Pal.Droid.Service
         {
             
             var user = await FirebaseAuth.GetInstance(MainActivity.app).SignInWithEmailAndPasswordAsync(email, pass);
-            return user.User.Uid;
+            return user.User.Email;
 
         }
 
         public async Task<string> RegisterWithEmailPassword(string email, string pass)
         {
             var user = await FirebaseAuth.GetInstance(MainActivity.app).CreateUserWithEmailAndPasswordAsync(email, pass);
-            return user.User.Uid;
+            return user.User.Email;
         }
 
     }

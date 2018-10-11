@@ -12,7 +12,6 @@ namespace Pal
         public MainPage()
         {
             InitializeComponent();
-            this.Title = "Pal";
             //var pages = Children.GetEnumerator();
             //pages.MoveNext(); // First page
             //pages.MoveNext(); // Second page

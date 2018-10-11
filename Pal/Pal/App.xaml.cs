@@ -9,8 +9,6 @@ namespace Pal
 {
     public partial class App : Application
     {
-        public static string User = "Rendy";
-
         public App()
         {
 
@@ -19,12 +17,12 @@ namespace Pal
 
             //if (!UserSetting.IsUserSet)
             //{
-                MainPage = new NavigationPage(new AuthenticationPage());
+                //MainPage = new NavigationPage(new AuthenticationPage());
 
             //}
             //else
             //{
-            //    MainPage = new NavigationPage(new ChatsPage());
+                MainPage = new NavigationPage(new ChatsPage());
             //}
         }
 
