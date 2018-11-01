@@ -1,5 +1,7 @@
 ﻿using Pal.Model;
+using Pal.ViewModel;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -8,25 +10,24 @@ namespace Pal.View
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class ChatsPage : ContentPage
 	{
-        public ObservableCollection<ChatRoom> ChatRooms { get; set; }
+        ChatsPageViewModel VM = new ChatsPageViewModel();
 
         public ChatsPage ()
 		{
-            ChatRooms = new ObservableCollection<ChatRoom>();
-            User TempUser = new User("John", "blank-profile-picture-640.png");
-            ChatRoom TempChatRoom = new ChatRoom("Testing",new ObservableCollection<User> { TempUser});
-            ChatRooms.Add(TempChatRoom);
-
             InitializeComponent ();
-
-            ChatRoomList.ItemsSource = ChatRooms;
+            this.BindingContext = VM;
+            base.OnAppearing();
         }
 
-
-        private void ChatList_ItemTapped(object sender, ItemTappedEventArgs e)
+        protected override async void OnAppearing()
         {
-            this.Navigation.PushAsync(new ChatContents(e.Item));
+            await VM.OnAppearing();
         }
 
+
+        public void ChatList_ItemTapped(object sender, ItemTappedEventArgs e)
+        {
+
+        }
     }
 }

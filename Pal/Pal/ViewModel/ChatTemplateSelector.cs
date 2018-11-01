@@ -1,4 +1,5 @@
 ﻿using Pal.Model;
+using Pal.Service;
 using Pal.View.CustomViewCell;
 using System;
 using System.Diagnostics;
@@ -24,7 +25,7 @@ namespace Pal.ViewModel
             if (messageVm == null)
                 return null;
 
-            return (messageVm.User == App.User) ? OutgoingDataTemplate : IncomingDataTemplate;
+            return (string.Compare(messageVm.SenderEmail,UserSetting.UserEmail)==0) ? OutgoingDataTemplate : IncomingDataTemplate;
 
         }
 

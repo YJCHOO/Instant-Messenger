@@ -4,6 +4,12 @@
              xmlns:local="clr-namespace:Pal.ViewModel"
              x:Class="Pal.View.ChatContents">
 
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Icon="baseline_timer_white_24dp.png" Text="Self Destruct Timer"
+                     Clicked="DestructTimer_Clicked"
+                     />
+    </ContentPage.ToolbarItems>
+    
     <ContentPage.Resources>
         <ResourceDictionary>
             <local:ChatTemplateSelector x:Key="MessageTemplateSelector"/>
@@ -38,6 +44,7 @@
                 <Button Text="Send"
                  Command="{Binding OnSendCommand}"
                  Clicked="OnSendBtn"/>
+
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>

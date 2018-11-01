@@ -9,11 +9,21 @@
            Margin="80,10,10,10"
            HorizontalOptions="EndAndExpand"
                CornerRadius="15">
-            <StackLayout Orientation="Horizontal">
-                <Label Text="{Binding Text}"
-                        TextColor="White"/>
-            <Label Text="{Binding DataTime}"
-                        TextColor="WhiteSmoke"/>
+            <StackLayout Orientation="Vertical">
+
+            <Label Text="{Binding SenderName}" 
+                TextColor="White"
+                   FontSize="Small"
+                   FontAttributes="Bold"/>
+
+            <Label Text="{Binding Text}"
+                        TextColor="White"
+                   FontSize="Small"/>
+
+            <Label Text="{Binding SendDateTime, StringFormat='\{0:h:mm tt}'}"
+                   HorizontalOptions="EndAndExpand"
+                   TextColor="WhiteSmoke"
+                   FontSize="Micro"/>
         </StackLayout>
         </Frame>
 </ViewCell>

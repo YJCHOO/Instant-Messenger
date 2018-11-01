@@ -1,6 +1,10 @@
-﻿using Pal.Service;
+﻿using Pal.Model;
+using Pal.Service;
 using Pal.View;
 using Pal.View.Authentication;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -9,21 +13,22 @@ namespace Pal
 {
     public partial class App : Application
     {
+
+        public static List<User> FriendsList { get; set; } = new List<User>();
+        public static User searchResult = new User();
+
         public App()
         {
-
             InitializeComponent();
 
+            if (UserSetting.IsUserEmail && UserSetting.IsUserName)
+            {
 
-            //if (!UserSetting.IsUserSet)
-            //{
-                //MainPage = new NavigationPage(new AuthenticationPage());
-
-            //}
-            //else
-            //{
                 MainPage = new NavigationPage(new ChatsPage());
-            //}
+            }
+            else {
+                MainPage = new NavigationPage(new AuthenticationPage());
+            }
         }
 
         protected override void OnStart()
@@ -40,5 +45,6 @@ namespace Pal
         {
             // Handle when your app resumes
         }
+
     }
 }

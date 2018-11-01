@@ -10,7 +10,7 @@ namespace Pal.View.Authentication
 		public UsernameSetupPage ()
 		{
 			InitializeComponent ();
-            this.BindingContext = new UsernameSetupPageViewModel();
+            this.BindingContext = new AuthenticationViewModel();
 
         }
 	}

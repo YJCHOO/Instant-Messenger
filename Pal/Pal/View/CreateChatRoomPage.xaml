@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Pal.View.CreateChatRoomPage">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Name="Create Chat Room" Icon="sharp_add_white_24dp.png" Command="{Binding OncreateRoomCommand}"/>
+    </ContentPage.ToolbarItems>
+    
+    
+    <ContentPage.Content>
+        <StackLayout>
+            <Entry Placeholder="Search" />
+            <ListView>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ImageCell Text="{Binding Email}" Detail="{Binding Username}"  ImageSource="{Binding Image}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

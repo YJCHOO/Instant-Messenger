@@ -58,13 +58,16 @@
     <PackageReference Include="Xamarin.Firebase.Auth">
       <Version>60.1142.1</Version>
     </PackageReference>
+    <PackageReference Include="Xamarin.Firebase.Database">
+      <Version>60.1142.1</Version>
+    </PackageReference>
     <PackageReference Include="Xamarin.Firebase.Firestore">
       <Version>60.1142.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Firebase.Storage">
       <Version>60.1142.1</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Forms" Version="3.2.0.871581" />
+    <PackageReference Include="Xamarin.Forms" Version="3.3.0.912540" />
     <PackageReference Include="Xamarin.Android.Support.Design" Version="27.0.2.1" />
     <PackageReference Include="Xamarin.Android.Support.v7.AppCompat" Version="27.0.2.1" />
     <PackageReference Include="Xamarin.Android.Support.v4" Version="27.0.2.1" />
@@ -81,6 +84,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EventListeners\EventListener.cs" />
+    <Compile Include="EventListeners\OnCompleteEventHandleListener.cs" />
+    <Compile Include="EventListeners\OnFailureListener.cs" />
+    <Compile Include="EventListeners\OnSuccessListener.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -125,6 +132,15 @@
       <Project>{0876be8b-b266-42cb-8547-b380ec66b68e}</Project>
       <Name>Pal</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\sharp_add_white_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\outline_person_add_white_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\baseline_timer_white_24dp.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

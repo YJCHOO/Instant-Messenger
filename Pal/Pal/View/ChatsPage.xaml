@@ -2,13 +2,19 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Pal.View.ChatsPage">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Name="Add Chat" Order="Secondary" Command="{Binding OnAddChatCommand}"/>
+        <ToolbarItem Name="Friends List" Order="Secondary" Command="{Binding OnFriendsListCommand}"/>
+        <ToolbarItem Name="Logout" Order="Secondary" Command="{Binding OnLogoutCommand}"/>
+    </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <StackLayout>
 
-            <ListView x:Name="ChatRoomList" ItemTapped="ChatList_ItemTapped">
+            <ListView x:Name="ChatRoomList" ItemTapped="ChatList_ItemTapped" ItemsSource="{Binding ChatRooms}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <ImageCell Text="{Binding RoomTilte}" Detail="Hello" ImageSource="blank_profile_picture_640.png"/>
+                        <ImageCell Text="{Binding RoomTilte}" Detail="{Binding LastMsg}" ImageSource="{Binding Image}"/>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Pal.View.FriendListPage"
+             Title="Friends">
+
+    <ContentPage.Content>
+        <StackLayout>
+            <SearchBar x:Name="UserSearchBar" Placeholder="Search By Email" TextChanged="UserSearchBar_TextChanged"/>
+            <ListView x:Name="FriendsListView" Header="Friends" ItemsSource="{Binding FriendsList}" ItemTapped="FriendsListView_ItemTapped">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ImageCell Text="{Binding UserName}" Detail="{Binding Email}" ImageSource="{Binding UserImg}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Label x:Name="ResultLbl" Text="{Binding SearchResultLbl}" HorizontalOptions="Center"/>
+            <Button x:Name="SearchUserBtn" IsVisible="False" Clicked="SearchUserBtn_Clicked" />
+
+            <!--<ContentView x:Name="PopOutAddUserView" Padding="10, 0" BackgroundColor="Gray" IsVisible="false"  AbsoluteLayout.LayoutBounds="0, 0, 1, 1" AbsoluteLayout.LayoutFlags="All">
+                <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                    <StackLayout Orientation="Vertical" HeightRequest="200" WidthRequest="300" BackgroundColor="White">
+                        <ListView x:Name="UserListView" ItemsSource="{Binding SearchUserResult}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ImageCell Text="{Binding UserName}" Detail="{Binding Email}" ImageSource="{Binding UserImg}"/>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackLayout>
+                </StackLayout>
+            </ContentView>-->
+
+
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
