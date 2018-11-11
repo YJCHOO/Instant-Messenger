@@ -5,9 +5,11 @@
              x:Class="Pal.View.ChatContents">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Icon="baseline_timer_white_24dp.png" Text="Self Destruct Timer"
+        <ToolbarItem Icon="baseline_timer_white_24dp.png" Text="Self-Destruct"
                      Clicked="DestructTimer_Clicked"
                      />
+        <ToolbarItem Icon="round_attachment_white_24dp.png" Text="Attach" Clicked="AddAttachments_Clicked"/>
+
     </ContentPage.ToolbarItems>
     
     <ContentPage.Resources>
@@ -24,14 +26,28 @@
                  Margin="0" 
                  HasUnevenRows="True" 
                  VerticalOptions="FillAndExpand" 
-                 SeparatorColor="Transparent" >
+                 SeparatorColor="Transparent"
+                 SelectionMode="None">
             </ListView>
-        
+
             <BoxView HorizontalOptions="FillAndExpand"
                  HeightRequest="1"
                  BackgroundColor="LightGray"/>
 
+
+            <StackLayout x:Name="AttachmentSection" IsVisible="False" Orientation="Horizontal">
+                <Image 
+                   Source="{Binding Attachment}" 
+                   Aspect="AspectFit" 
+                   HeightRequest="60"
+                   WidthRequest="60"/>
+                <Label 
+                   Text="{Binding FileName}"/>
+                <Button Text="Remove" Clicked="BtnCancel_Clicked"/>
+            </StackLayout>
+
             <StackLayout Orientation="Horizontal">
+
                 <Entry x:Name="chatTextInput"
                  Text="{Binding TextToSend}"
                  Margin="1"
@@ -41,12 +57,16 @@
                  PlaceholderColor="LightGray"
                  Placeholder="Type your message here"/>
 
-                <Button Text="Send"
-                 Command="{Binding OnSendCommand}"
-                 Clicked="OnSendBtn"/>
+                <Button 
+                    Image="round_send_white_24dp.png"
+                    HeightRequest="50"
+                    WidthRequest="50"
+                    BorderRadius="30"
+                 Command="{Binding OnSendCommand}"/>
 
             </StackLayout>
         </StackLayout>
+
     </ContentPage.Content>
 
 </ContentPage>

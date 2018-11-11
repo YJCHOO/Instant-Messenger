@@ -1,5 +1,4 @@
 ﻿using Android.Gms.Tasks;
-using Java.Lang;
 using System;
 
 namespace Pal.Droid.EventListeners

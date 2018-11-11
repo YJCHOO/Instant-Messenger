@@ -1,7 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<ViewCell xmlns="http://xamarin.com/schemas/2014/forms"
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ViewCell xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Pal.View.CustomViewCell.IncomingViewCell">
+             x:Class="Pal.View.CustomViewCell.IncomingImgAttachmentViewCell">
     
     <Frame BackgroundColor="LightBlue"
            Padding="10"
@@ -14,6 +14,12 @@
                 TextColor="White"
                    FontSize="Small"
                    FontAttributes="Bold"/>
+
+            <Image x:Name="Attachment" Source="{Binding AttachmentUri}">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
+                </Image.GestureRecognizers>
+            </Image>
 
             <Label Text="{Binding Text}"
                 TextColor="White"

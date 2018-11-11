@@ -1,8 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<ViewCell xmlns="http://xamarin.com/schemas/2014/forms"
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ViewCell xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Pal.View.CustomViewCell.IncomingViewCell">
-    
+             x:Class="Pal.View.CustomViewCell.IncomingDocAttachmentViewCell">
     <Frame BackgroundColor="LightBlue"
            Padding="10"
            HasShadow="False"
@@ -14,6 +13,16 @@
                 TextColor="White"
                    FontSize="Small"
                    FontAttributes="Bold"/>
+
+            <StackLayout Orientation="Horizontal">
+                <Image Source="round_insert_drive_file_black_48.png" HeightRequest="48" WidthRequest="48"/>
+                <Label Text="{Binding AttachmentUri}" x:Name="DocUri" IsVisible="False"/>
+                <Label Text="{Binding FileName}"/>
+                <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
+                </StackLayout.GestureRecognizers>
+                
+            </StackLayout>
 
             <Label Text="{Binding Text}"
                 TextColor="White"

@@ -17,27 +17,23 @@ namespace Pal.Droid.Service
     class FirebaseDatabaseConn : IFirebaseDatabase
     {
 
-        private FirebaseFirestore Conn = FirebaseFirestore.GetInstance(MainActivity.app);
         private const string usercollection = "users";
         private const string friendsListCollection = "friendsList";
 
-        public Task<bool> DestructMessage(List<string> MessagesId) {
+        private FirebaseFirestore Conn = FirebaseFirestore.GetInstance(MainActivity.app);
+        private IListenerRegistration ReatimeListener = null;
+        ObservableCollection<Message> messages = new ObservableCollection<Message>();
+
+        public Task<bool> DestructMessage(String MessagesId) {;
+
             TaskCompletionSource<bool> ResultCompletionSource = new TaskCompletionSource<bool>();
-            try
-            {
-                foreach (string tempMessagesId in MessagesId)
-                {
-                    Conn.Collection("messages").Document(tempMessagesId).Update("UserRead." + UserSetting.UserEmail.Replace(".", ":"), true);
-
-                }
-                ResultCompletionSource.SetResult(true);
-            }
-            catch (Exception) {
-                ResultCompletionSource.SetResult(false);
-            }
-
+                    Conn.Collection("messages").Document(MessagesId).Update("UserRead." + UserSetting.UserEmail.Replace(".", ":"), true)
+                        .AddOnSuccessListener(new OnSuccessListener((Java.Lang.Object obj) => {
+                            ResultCompletionSource.SetResult(true);
+                        })).AddOnFailureListener(new OnFailureListener((Java.Lang.Exception e)=> {
+                            ResultCompletionSource.SetResult(false);
+                        }));
             return ResultCompletionSource.Task;
-            
         }
 
         public Task<string> SetRoomDestruct(string roomId,bool destructStatus) {
@@ -56,7 +52,7 @@ namespace Pal.Droid.Service
             return ResultCompletionSource.Task;
         }
 
-        public Task<IndividualChatRoom> AddIndividualChatRoom(User user,string roomTitle) {
+        public Task<IndividualChatRoom> AddIndividualChatRoom(User user) {
 
             TaskCompletionSource<IndividualChatRoom> ResultCompletionSource = new TaskCompletionSource<IndividualChatRoom>();
             Android.Runtime.JavaDictionary<string, Java.Lang.Object> chatRoomUser = new Android.Runtime.JavaDictionary<string, Java.Lang.Object>
@@ -68,10 +64,10 @@ namespace Pal.Droid.Service
             var chatRoom = new Dictionary<string, Java.Lang.Object>
             {
                 { "image", null },
-                { "roomTitle", roomTitle },
+                { "roomTitle", null },
                 { "users", chatRoomUser },
                 { "isGroup", false },
-                { "destructType",0}
+                { "isDestruct",false}
             };
 
             Conn.Collection("roomList").Add(chatRoom).AddOnCompleteListener(new OnCompleteEventHandleListener((Android.Gms.Tasks.Task obj) => {
@@ -79,7 +75,7 @@ namespace Pal.Droid.Service
                 if (obj.IsSuccessful)
                 {
                     DocumentReference documentReference = (DocumentReference)obj.Result;
-                    IndividualChatRoom temp = new IndividualChatRoom(documentReference.Id, roomTitle, user,false);
+                    IndividualChatRoom temp = new IndividualChatRoom(documentReference.Id,null, user,false);
                     ResultCompletionSource.SetResult(temp);
                 }
                 else {
@@ -88,6 +84,7 @@ namespace Pal.Droid.Service
             }));
             return ResultCompletionSource.Task;
         }
+
         public Task<IndividualChatRoom> SearchIndividualChatRoom(string userEmail) {
 
             TaskCompletionSource<IndividualChatRoom> ResultCompletionSource = new TaskCompletionSource<IndividualChatRoom>();
@@ -97,7 +94,7 @@ namespace Pal.Droid.Service
                 .WhereEqualTo("users." + UserSetting.UserEmail.Replace(".",":"), true)
                 .WhereEqualTo("isGroup",false);
 
-            query.Get().AddOnCompleteListener(new OnCompleteEventHandleListener((Android.Gms.Tasks.Task obj) =>
+            query.Get().AddOnCompleteListener(new OnCompleteEventHandleListener(async (Android.Gms.Tasks.Task obj) =>
             {
                 if (obj.IsSuccessful)
                 {
@@ -109,7 +106,7 @@ namespace Pal.Droid.Service
                             var tempUser = (Android.Runtime.JavaDictionary)documentSnapshot.Data["users"];
                             {
                                 var id = documentSnapshot.Id;
-                                var title = (string)documentSnapshot.Data["roomTitle"];
+                                
                                 User user = new User();
                                 var isDestruct = (bool)documentSnapshot.Data["isDestruct"];
 
@@ -120,7 +117,8 @@ namespace Pal.Droid.Service
                                         user.Email = useremail;
                                     }
                                 }
-                                individualChat = new IndividualChatRoom(id, title, user, isDestruct);
+                                user.UserName = await GetUsername(user.Email.Replace(":","."));
+                                individualChat = new IndividualChatRoom(id, null, user, isDestruct);
                             }
 
                         }
@@ -138,32 +136,52 @@ namespace Pal.Droid.Service
         public Task<ObservableCollection<Message>> GetMessage(string roomId) {
 
             TaskCompletionSource<ObservableCollection<Message>> ResultCompletionSource = new TaskCompletionSource<ObservableCollection<Message>>();
-            ObservableCollection<Message> messages = new ObservableCollection<Message>();
-            
 
-            Conn.Collection("messages").WhereEqualTo("roomId",roomId).OrderBy("sendDateTime")
+
+           ReatimeListener = Conn.Collection("messages").WhereEqualTo("roomId",roomId).OrderBy("sendDateTime")
                 .AddSnapshotListener(new EventListener((Java.Lang.Object obj, FirebaseFirestoreException exception) =>
             {
                 if (exception == null)
                 {
-                    QuerySnapshot querySnapshot = (QuerySnapshot)obj;
+                    QuerySnapshot querySnapshot = (QuerySnapshot)obj;                    
                     if (!querySnapshot.IsEmpty)
                     {
                         foreach (DocumentChange documentChange in querySnapshot.DocumentChanges)
                         {
                             if (documentChange.GetType() == DocumentChange.Type.Added)
                             {
-                                
                                 var temp = documentChange.Document.Data;
-                                messages.Add(InitialMessage(documentChange.Document.Id,temp));
-                                SetRead(documentChange.Document.Id);
-                            }
+                                var tempMessage = InitialMessage(documentChange.Document.Id, temp);
+                                messages.Add(tempMessage);
 
-                            if (documentChange.GetType() == DocumentChange.Type.Modified) {
-                                    messages[documentChange.OldIndex] = InitialMessage(documentChange.Document.Id, documentChange.Document.Data);
-                                Debug.Write(messages[documentChange.OldIndex].MessageId);
+                                if (tempMessage.IsRead != null && !tempMessage.IsRead.ContainsKey(UserSetting.UserEmail.Replace(".", ":")))
+                                    SetRead(tempMessage);
+
+                            }
+                            else if (documentChange.GetType() == DocumentChange.Type.Modified)
+                            {
+                                messages[documentChange.OldIndex]=InitialMessage(documentChange.Document.Id, documentChange.Document.Data);
+                            }
+                            else if (documentChange.GetType() == DocumentChange.Type.Removed) {
+                                messages.RemoveAt(documentChange.OldIndex);
                             }
                         }
+
+                        foreach (Message tempMessage in messages)
+                        {
+                            if (tempMessage.IsRead != null)
+                            {
+                                var tempStatus = tempMessage.IsRead.ContainsKey(UserSetting.UserEmail.Replace(".", ":"));
+                                if (tempStatus&&tempMessage.IsRead[UserSetting.UserEmail.Replace(".",":")])
+                                {
+                                    var indexOf = messages.IndexOf(tempMessage);
+                                    messages[indexOf].Text = "--This message was destructed--";
+                                    messages[indexOf].AttachmentUri = "";
+                                    messages[indexOf].AttachmentFileName = "";
+                                }
+                            }
+                        }
+
                         ResultCompletionSource.TrySetResult(messages);
                     }
                     else
@@ -178,64 +196,6 @@ namespace Pal.Droid.Service
                 return ResultCompletionSource.Task;
             }
 
-      //public Task<List<object>> GetAllRoom() {
-
-      //      TaskCompletionSource<List<object>> ResultCompletionSource = new TaskCompletionSource<List<object>>();
-
-      //      List<object> Rooms = new List<object>();
-      //      var tempEmail= UserSetting.UserEmail;
-      //      var convertedEmail = tempEmail.Replace(".", ":");
-      //      ChatRoom chatRoom;
-      //      Query query = Conn.Collection("roomList").WhereEqualTo("users."+convertedEmail,true);
-      //      query.Get().AddOnCompleteListener(new OnCompleteEventHandleListener((Android.Gms.Tasks.Task obj) => {
-
-      //          if (obj.IsSuccessful)
-      //          {
-
-      //              QuerySnapshot TempDocSnapshot = (QuerySnapshot)obj.Result;
-      //              foreach (DocumentSnapshot documentSnapshot in TempDocSnapshot.Documents)
-      //              {
-      //                  var roomID = documentSnapshot.Id;
-      //                  var roomTitle = (string)documentSnapshot.Data["roomTitle"];
-
-
-      //                  var tempUser = (Android.Runtime.JavaDictionary)documentSnapshot.Data["users"];
-      //                  if (tempUser.Count == 2)
-      //                  {
-
-      //                      User user = new User();
-      //                      foreach (string useremail in tempUser.Keys)
-      //                      {
-      //                          if (string.Compare(useremail, convertedEmail) != 0)
-      //                          {
-      //                              user.Email = useremail;
-      //                          }
-
-      //                      }
-      //                      chatRoom = new IndividualChatRoom(roomID, roomTitle, user);
-      //                      Rooms.Add(chatRoom);
-
-      //                  }
-      //                  else {
-      //                      ObservableCollection<User> users = new ObservableCollection<User>();
-      //                      foreach (string useremail in tempUser.Keys) {
-      //                          users.Add(new User(useremail));
-
-      //                      }
-
-      //                      chatRoom = new GroupChatRoom(roomID, roomTitle, users);
-
-      //                  }
-
-      //              }
-
-
-      //          }
-
-      //      }));
-      //      return ResultCompletionSource.Task;
-      //  }
-
         public void SetMessage(ChatRoom chatRoom,Message message)
         {
             var date = new Java.Util.Date();
@@ -244,7 +204,8 @@ namespace Pal.Droid.Service
                 { "senderEmail",message.SenderEmail },
                 { "senderName",message.SenderName },
                 { "text",message.Text },
-                { "attachment",message.Attachment },
+                { "attachment",message.AttachmentUri},
+                { "attachmentFileName",message.AttachmentFileName},
                 { "sendDateTime",date},
                 { "isDestruct",chatRoom.IsDestruct},
                 { "UserRead",null}
@@ -339,7 +300,6 @@ namespace Pal.Droid.Service
                         App.FriendsList = FriendsList;
 
                     ResultCompletionSource.SetResult(FriendsList);
-                    //await new ChatsPageViewModel().ForwardToFriendsListAsync();
                 }
             }));
 
@@ -361,6 +321,7 @@ namespace Pal.Droid.Service
         {
 
             var attachment = (string)messageFrmDB["attachment"];
+            var attachmentFileName = (string)messageFrmDB["attachmentFileName"];
             var sendDateTime = messageFrmDB["sendDateTime"];
             var senderEmail = (string)messageFrmDB["senderEmail"];
             var senderName = (string)messageFrmDB["senderName"];
@@ -394,16 +355,93 @@ namespace Pal.Droid.Service
                     IsRead.Add(KeyString[a], ValueBool[a]);
                 }
             }
-            Message message = new Message(docId,senderEmail, senderName, text, attachment, castSendDateTime, isDestruct, IsRead);
+            Message message = new Message(docId,senderEmail, senderName, text, attachment, attachmentFileName, castSendDateTime, isDestruct, IsRead);
             return message;
-
         }
 
-        public void SetRead(string messageId)
+        public void SetRead(Message message)
         {
-            var ReadMessage = new Android.Runtime.JavaDictionary<string, Java.Lang.Object> {
-                            { UserSetting.UserEmail.Replace(".", ":"), false } };
-            Conn.Collection("messages").Document(messageId).Update("UserRead", ReadMessage);
+            var ReadMessage = new Android.Runtime.JavaDictionary<string, Java.Lang.Object>();
+
+            if (message.IsRead.Count != 0) {
+                foreach (string key in message.IsRead.Keys)
+                {
+
+                    ReadMessage.Add(key, message.IsRead[key]);
+                }
+            }
+            
+             ReadMessage.Add ( UserSetting.UserEmail.Replace(".", ":"), false);
+           
+            Conn.Collection("messages").Document(message.MessageId).Update("UserRead", ReadMessage);
         }
+
+        public void ClearMessages() {
+            if (ReatimeListener != null)
+            {
+                ReatimeListener.Remove();
+                ReatimeListener = null;
+            }
+            this.messages = new ObservableCollection<Message>();
+
+        }
+
+        //public Task<List<object>> GetAllRoom() {
+
+        //      TaskCompletionSource<List<object>> ResultCompletionSource = new TaskCompletionSource<List<object>>();
+
+        //      List<object> Rooms = new List<object>();
+        //      var tempEmail= UserSetting.UserEmail;
+        //      var convertedEmail = tempEmail.Replace(".", ":");
+        //      ChatRoom chatRoom;
+        //      Query query = Conn.Collection("roomList").WhereEqualTo("users."+convertedEmail,true);
+        //      query.Get().AddOnCompleteListener(new OnCompleteEventHandleListener((Android.Gms.Tasks.Task obj) => {
+
+        //          if (obj.IsSuccessful)
+        //          {
+
+        //              QuerySnapshot TempDocSnapshot = (QuerySnapshot)obj.Result;
+        //              foreach (DocumentSnapshot documentSnapshot in TempDocSnapshot.Documents)
+        //              {
+        //                  var roomID = documentSnapshot.Id;
+        //                  var roomTitle = (string)documentSnapshot.Data["roomTitle"];
+
+
+        //                  var tempUser = (Android.Runtime.JavaDictionary)documentSnapshot.Data["users"];
+        //                  if (tempUser.Count == 2)
+        //                  {
+
+        //                      User user = new User();
+        //                      foreach (string useremail in tempUser.Keys)
+        //                      {
+        //                          if (string.Compare(useremail, convertedEmail) != 0)
+        //                          {
+        //                              user.Email = useremail;
+        //                          }
+
+        //                      }
+        //                      chatRoom = new IndividualChatRoom(roomID, roomTitle, user);
+        //                      Rooms.Add(chatRoom);
+
+        //                  }
+        //                  else {
+        //                      ObservableCollection<User> users = new ObservableCollection<User>();
+        //                      foreach (string useremail in tempUser.Keys) {
+        //                          users.Add(new User(useremail));
+
+        //                      }
+
+        //                      chatRoom = new GroupChatRoom(roomID, roomTitle, users);
+
+        //                  }
+
+        //              }
+
+
+        //          }
+
+        //      }));
+        //      return ResultCompletionSource.Task;
+        //  }
     }
 }

@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ViewCell xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Pal.View.CustomViewCell.OutgoingVideoAttachmentViewCell">
+    <Frame BackgroundColor="Gray"
+           Padding="10"
+           HasShadow="False"
+           Margin="80,10,10,10"
+           HorizontalOptions="EndAndExpand"
+               CornerRadius="15">
+        <StackLayout Orientation="Vertical">
+
+            <Label Text="{Binding SenderName}" 
+                TextColor="White"
+                   FontSize="Small"
+                   FontAttributes="Bold"/>
+            
+            <StackLayout Orientation="Horizontal">
+                <Image Source="round_movie_black_48.png" HeightRequest="48" WidthRequest="48"/>
+                <Label x:Name="VideoUri" IsVisible="False" Text="{Binding AttachmentUri}"/>
+                <Label Text="{Binding AttachmentFileName}"/>
+                <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
+                </StackLayout.GestureRecognizers>
+            </StackLayout>
+
+            <Label Text="{Binding Text}"
+                        TextColor="White"
+                   FontSize="Small"/>
+
+            <Label Text="{Binding SendDateTime, StringFormat='\{0:h:mm tt}'}"
+                   HorizontalOptions="EndAndExpand"
+                   TextColor="WhiteSmoke"
+                   FontSize="Micro"/>
+        </StackLayout>
+    </Frame>
+</ViewCell>

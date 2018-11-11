@@ -1,9 +1,16 @@
 ﻿using Pal.Model;
 using Pal.Service;
+using Plugin.Connectivity;
+using Plugin.FilePicker;
+using Plugin.FilePicker.Abstractions;
+using Plugin.Permissions;
+using Plugin.Permissions.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
@@ -18,58 +25,75 @@ namespace Pal.ViewModel
         public ICommand OnSendCommand { get; set; }
         public ChatRoom ChatRoom;
         public event PropertyChangedEventHandler PropertyChanged;
-
+        public string Attachment { get; set; }
+        public string FileName { get; set; }
+        public FileData PickedFileData = null;
+        
 
         public ChatContentsViewModel(object objChatRoom)
         {
-            if (objChatRoom.GetType() == typeof(IndividualChatRoom))
-                ChatRoom = (IndividualChatRoom)objChatRoom;
-            else 
-                ChatRoom = (GroupChatRoom)objChatRoom;
-            
-                OnSendCommand = new Command(() =>
+            SetChatRoomType(objChatRoom);
+
+            OnSendCommand = new Command(async () =>
+            {
+                if (!CrossConnectivity.Current.IsConnected) {
+                    await App.Current.MainPage.DisplayAlert("No Internet Connection", "Message not able to send, Please check your internet connection and try again.", "Ok");
+                    return;
+                }
+
+                if (!string.IsNullOrEmpty(TextToSend) || PickedFileData != null)
                 {
-                    if (!string.IsNullOrEmpty(TextToSend))
+                    
+                    Attachment attachmentType = new Attachment() ;
+                    if (PickedFileData != null)
                     {
-                        Message message = new Message( UserSetting.UserEmail,UserSetting.UserName,TextToSend) ;
-                        Messages.Add(message);
-                        TextToSend = string.Empty;
-                        DependencyService.Get<IFirebaseDatabase>().SetMessage(ChatRoom, message);
-                        this.OnPropertyChanged("Messages");
+
+                        attachmentType = await UploadFile(PickedFileData);
                     }
 
-                });
+                    Message message = new Message(UserSetting.UserEmail, UserSetting.UserName, this.TextToSend, attachmentType.AttachmentUri,attachmentType.FileName);
+                    TextToSend = string.Empty;
+                    OnPropertyChanged("TextToSend");
+                    DependencyService.Get<IFirebaseDatabase>().SetMessage(ChatRoom, message);
+                    
+                }
+
+            });
         }
 
+        private void SetChatRoomType(object objChatRoom)
+        {
+            if (objChatRoom.GetType() == typeof(IndividualChatRoom))
+                ChatRoom = (IndividualChatRoom)objChatRoom;
+            else
+                ChatRoom = (GroupChatRoom)objChatRoom;
+        }
 
         public async Task OnAppearing() {
-           var TempMessages =  await DependencyService.Get<IFirebaseDatabase>().GetMessage(ChatRoom.RoomID);
-            if (TempMessages != null)
+           var NewMessages =  await DependencyService.Get<IFirebaseDatabase>().GetMessage(ChatRoom.RoomID);
+            if (NewMessages != null)
             {
                 Messages.Clear();
-                foreach (Message tempMessage in TempMessages) {
-                    var tempStatus = tempMessage.IsRead[UserSetting.UserEmail.Replace(".", ":")];
-                    if (tempStatus) {
-                        tempMessage.Text = "--This message was destructed--";
-                    }
-                    Messages.Add(tempMessage);
-                }
+                Messages = NewMessages;
                 this.OnPropertyChanged("Messages");
             }
         }
 
         public async Task OnDisappearing() {
 
-            List<string> documentsID = new List<string>();
-            foreach (Message tempMessage in Messages) {
-                if (tempMessage.IsDestruct) 
-                    documentsID.Add(tempMessage.MessageId);
-            }
+            DependencyService.Get<IFirebaseDatabase>().ClearMessages();
+            var ForEachMessage = Messages;
+            foreach (Message tempMessage in ForEachMessage) {
+                if (tempMessage.IsDestruct)
+                {
+                    var status = await DependencyService.Get<IFirebaseDatabase>().DestructMessage(tempMessage.MessageId);
 
-           var checkStatus =  await DependencyService.Get<IFirebaseDatabase>().DestructMessage(documentsID);
-            if (!checkStatus) {
-
-                await App.Current.MainPage.DisplayAlert("Something happen....", "Message unable to destruct", "Ok");
+                    if (!status)
+                    {
+                        await App.Current.MainPage.DisplayAlert("Something happen....", "Message unable to destruct", "Ok");
+                        break;
+                    }
+                }
             }
         }
 
@@ -80,12 +104,107 @@ namespace Pal.ViewModel
             }
         }
 
-        public void UpdateMessageToRead() {
 
-            DependencyService.Get<IFirebaseDatabase>().SetRead(ChatRoom.RoomID);
+        public async Task<bool> PickAndShowFile() {
+            //Check Permission
+            if (!await this.CheckPermissionsAsync())
+            {
+                return false;
+            }
+
+            string CheckType=null;
+            var pickedFile = await CrossFilePicker.Current.PickFile();
+            if (pickedFile == null){ return false; }
+            else { 
+                CheckType = IsSupportedType(pickedFile.FileName);
+
+                if (CheckType == null)
+                {
+                    await App.Current.MainPage.DisplayAlert("Something happen....", "Selected file format not supported", "Ok");
+                    return false;
+                }
+
+                switch (CheckType) {
+                    case "Img":
+                        Attachment = pickedFile.FilePath;
+                        break;
+
+                    case "Video":
+                        Attachment = "round_movie_black_48.png";
+                        break;
+
+                    case "PDF":
+                        Attachment = "round_insert_drive_file_black_48.png";
+                        break;
+                }
+                FileName = "Attachment: " + pickedFile.FileName;
+
+                this.OnPropertyChanged("Attachment");
+                this.OnPropertyChanged("FileName");
+                PickedFileData = pickedFile;
+                return true;
+            }
         }
 
-        public void OnPropertyChanged(String Property)
+        private string IsSupportedType(string FileType) {
+
+            string Type = null;
+
+            if (FileType.EndsWith("jpg", StringComparison.OrdinalIgnoreCase) ||
+                   FileType.EndsWith("png", StringComparison.OrdinalIgnoreCase))
+                Type = "Img";
+            else if (FileType.EndsWith("mp4", StringComparison.OrdinalIgnoreCase))
+                Type = "Video";
+            else if (FileType.EndsWith("pdf", StringComparison.OrdinalIgnoreCase))
+                Type = "PDF";
+            return Type;
+        }
+
+        private async Task<Attachment> UploadFile(FileData FileStream) {
+               var url =  await DependencyService.Get<IFirebaseStorage>().UploadFile(FileStream);
+            return url;
+        }
+
+        private async Task<bool> CheckPermissionsAsync()
+        {
+            try
+            {
+                var status = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Storage);
+                if (status != PermissionStatus.Granted)
+                {
+                    if (await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(Permission.Storage))
+                    {
+                        await App.Current.MainPage.DisplayAlert("Xamarin.Forms Sample", "Storage permission is needed for file picking", "OK");
+                    }
+
+                    var results = await CrossPermissions.Current.RequestPermissionsAsync(Permission.Storage);
+
+                    if (results.ContainsKey(Permission.Storage))
+                    {
+                        status = results[Permission.Storage];
+                    }
+                }
+
+                if (status == PermissionStatus.Granted)
+                {
+                    return true;
+                }
+                else if (status != PermissionStatus.Unknown)
+                {
+                    await App.Current.MainPage.DisplayAlert("Xamarin.Forms Sample", "Storage permission was denied.", "OK");
+                }
+
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+    
+
+
+    public void OnPropertyChanged(String Property)
         {
             PropertyChanged(this, new PropertyChangedEventArgs(Property));
         }

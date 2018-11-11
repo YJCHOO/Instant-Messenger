@@ -48,7 +48,7 @@ namespace Pal.ViewModel
 
         public async Task<IndividualChatRoom> CreateIndividualChatRoom(User user) {
 
-            var individualChatRoom =  await DependencyService.Get<IFirebaseDatabase>().AddIndividualChatRoom(user, user.UserName);
+            var individualChatRoom =  await DependencyService.Get<IFirebaseDatabase>().AddIndividualChatRoom(user);
             return individualChatRoom;
                 
             

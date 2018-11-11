@@ -1,7 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<ViewCell xmlns="http://xamarin.com/schemas/2014/forms"
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ViewCell xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Pal.View.CustomViewCell.IncomingViewCell">
+             x:Class="Pal.View.CustomViewCell.IncomingVideoAttachementViewCell">
     
     <Frame BackgroundColor="LightBlue"
            Padding="10"
@@ -15,7 +15,16 @@
                    FontSize="Small"
                    FontAttributes="Bold"/>
 
-            <Label Text="{Binding Text}"
+            <StackLayout Orientation="Horizontal">
+                <Image Source="round_movie_black_48.png" HeightRequest="48" WidthRequest="48"/>
+                <Label x:Name="VideoUri" IsVisible="False" Text="{Binding AttachmentUri}"/>
+                <Label Text="{Binding AttachmentFileName}"/>
+                <StackLayout.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="StackLayout_Tapped" />
+                </StackLayout.GestureRecognizers>
+            </StackLayout>
+
+        <Label Text="{Binding Text}"
                 TextColor="White"
                 FontSize="Small"/>
 

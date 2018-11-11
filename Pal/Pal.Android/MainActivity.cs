@@ -22,7 +22,11 @@ namespace Pal.Droid
 
             base.OnCreate(savedInstanceState);
             InitiFirebaseAuth();
+            Plugin.CurrentActivity.CrossCurrentActivity.Current.Init(this, savedInstanceState);
+
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
+
+
             LoadApplication(new App());
         }
 
@@ -31,14 +35,16 @@ namespace Pal.Droid
                 .SetApplicationId("1:561500824016:android:3e9713b097aad310")
                 .SetApiKey("AIzaSyAuE_feaACvYJC9bhcLUoqeRlKLpbf4fq0")
                 .SetProjectId("palproject-127b0")
+                .SetStorageBucket("gs://palproject-127b0.appspot.com")
                 .SetDatabaseUrl("https://palproject-127b0.firebaseio.com/")
                 .Build();
 
             if (app == null) {
                 app = FirebaseApp.InitializeApp(this,options, "Pal");
             }
-
         }
+
+
 
     }
 }

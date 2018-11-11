@@ -16,5 +16,5 @@ namespace Pal.View.CustomViewCell
 		{
 			InitializeComponent ();
 		}
-	}
+    }
 }
