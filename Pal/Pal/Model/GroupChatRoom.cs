@@ -7,10 +7,11 @@ namespace Pal.Model
 {
     public class GroupChatRoom : ChatRoom
     {
+        public string Admin { get; set; }
         public ObservableCollection<User> _Users { get; set; }
 
-        public GroupChatRoom(string roomID, string roomTitle, ObservableCollection<User> Users,bool isDestruct) : base(roomID,roomTitle,isDestruct) {
-
+        public GroupChatRoom(string roomID, string roomTitle,string admin, ObservableCollection<User> Users,bool isDestruct) : base(roomID,roomTitle,isDestruct) {
+            Admin = admin;
             _Users = Users;
 
         }

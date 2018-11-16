@@ -23,8 +23,11 @@ namespace Pal.ViewModel
         public ObservableCollection<Message> Messages { get; set; } = new ObservableCollection<Message>();
         public string TextToSend { get; set; }
         public ICommand OnSendCommand { get; set; }
-        public ChatRoom ChatRoom;
+        public ChatRoom ChatRoom = new ChatRoom();
         public event PropertyChangedEventHandler PropertyChanged;
+        public bool AttachmentSection { get; set; } = false;
+        public bool Uploading { get; set; } = false;
+
         public string Attachment { get; set; }
         public string FileName { get; set; }
         public FileData PickedFileData = null;
@@ -47,15 +50,23 @@ namespace Pal.ViewModel
                     Attachment attachmentType = new Attachment() ;
                     if (PickedFileData != null)
                     {
-
+                        Uploading = true;
+                        AttachmentSection = false;
+                        OnPropertyChanged("Uploading");
+                        OnPropertyChanged("AttachmentSection");
                         attachmentType = await UploadFile(PickedFileData);
+                        Uploading = false;
+                        OnPropertyChanged("Uploading");
                     }
 
                     Message message = new Message(UserSetting.UserEmail, UserSetting.UserName, this.TextToSend, attachmentType.AttachmentUri,attachmentType.FileName);
-                    TextToSend = string.Empty;
-                    OnPropertyChanged("TextToSend");
-                    DependencyService.Get<IFirebaseDatabase>().SetMessage(ChatRoom, message);
                     
+                    DependencyService.Get<IFirebaseDatabase>().SetMessage(ChatRoom, message);
+
+                    TextToSend = string.Empty;
+                    AttachmentSection = false;
+                    OnPropertyChanged("TextToSend");
+                    OnPropertyChanged("AttachmentSection");
                 }
 
             });
@@ -103,8 +114,7 @@ namespace Pal.ViewModel
                 await App.Current.MainPage.DisplayAlert("Something happen....", UpdateStatus, "Ok");
             }
         }
-
-
+        
         public async Task<bool> PickAndShowFile() {
             //Check Permission
             if (!await this.CheckPermissionsAsync())
@@ -201,7 +211,21 @@ namespace Pal.ViewModel
                 return false;
             }
         }
-    
+
+        public void DisplayAttachment() {
+            AttachmentSection = true;
+            OnPropertyChanged("AttachmentSection");
+
+        }
+
+        public void RemoveAttachment() {
+            Attachment = null;
+            PickedFileData = null;
+            FileName = null;
+            AttachmentSection = false;
+            OnPropertyChanged("AttachmentSection");
+
+        } 
 
 
     public void OnPropertyChanged(String Property)

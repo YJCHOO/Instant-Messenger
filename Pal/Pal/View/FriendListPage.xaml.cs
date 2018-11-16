@@ -24,7 +24,6 @@ namespace Pal.View
         {
             InitializeComponent();
             this.BindingContext = VM;
-            base.OnAppearing();
         }
 
         private void ListVisble() {
@@ -58,6 +57,7 @@ namespace Pal.View
         protected override async void OnAppearing()
         {
             UserSearchBar.IsEnabled = false;
+            FriendsListView.BeginRefresh();
            var Temp =  await VM.OnAppearing() ;
             if (Temp.Count != 0)
             {
@@ -69,6 +69,7 @@ namespace Pal.View
                 ResultLblVisibleOnly();
             }
             UserSearchBar.IsEnabled = true;
+            FriendsListView.EndRefresh();
         }
 
         private void UserSearchBar_TextChanged(object sender, TextChangedEventArgs e)
@@ -147,6 +148,11 @@ namespace Pal.View
                 await VM.SearchIndividualChatRoom((User)e.Item);
                 FriendsListView.EndRefresh();
             }
+        }
+
+        private async void NewGroup_Clicked(object sender, EventArgs e)
+        {
+            await App.Current.MainPage.Navigation.PushAsync(new InviteMembersPage(VM.FriendsList));
         }
     }
 }

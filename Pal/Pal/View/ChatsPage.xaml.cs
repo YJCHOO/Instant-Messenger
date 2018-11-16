@@ -1,6 +1,8 @@
 ﻿using Pal.Model;
+using Pal.Service;
 using Pal.ViewModel;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -21,13 +23,22 @@ namespace Pal.View
 
         protected override async void OnAppearing()
         {
-            await VM.OnAppearing();
+            await VM.InitialRoom();
+
+            base.OnAppearing();
         }
 
-
-        public void ChatList_ItemTapped(object sender, ItemTappedEventArgs e)
+        public async void ChatList_ItemTapped(object sender, ItemTappedEventArgs e)
         {
-
+            ChatRoomList.BeginRefresh();
+            if (e.Item.GetType() == typeof(IndividualChatRoom))
+            {
+                await App.Current.MainPage.Navigation.PushAsync(new ChatContents((IndividualChatRoom)e.Item));
+            }
+            else {
+                await App.Current.MainPage.Navigation.PushAsync(new ChatContents((GroupChatRoom)e.Item));
+            }
+            ChatRoomList.EndRefresh();
         }
     }
 }

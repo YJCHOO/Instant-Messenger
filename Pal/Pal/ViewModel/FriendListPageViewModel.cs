@@ -24,8 +24,6 @@ namespace Pal.ViewModel
             SearchUserResult = new ObservableCollection<User>();
         }
 
-
-
         public async Task<ObservableCollection<User>> GetSearchResult(string email) {
 
             var user = await DependencyService.Get<IFirebaseDatabase>().SearchUser(email);
@@ -69,10 +67,8 @@ namespace Pal.ViewModel
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            PropertyChanged?.Invoke(this,
-       new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this,new PropertyChangedEventArgs(propertyName));
         }
-
 
         private async Task<ObservableCollection<User>> InitialFriendsListAsync()
         {
@@ -86,5 +82,7 @@ namespace Pal.ViewModel
             }
             return TempFriendsList;
         }
+
+       
     }
 }

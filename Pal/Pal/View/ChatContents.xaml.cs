@@ -19,7 +19,17 @@ namespace Pal.View
             this.Title = SelectedUser._User.UserName;
         }
 
+        public ChatContents(GroupChatRoom groupChat) {
+            InitializeComponent();
+            this.BindingContext = _chatRoom = new ChatContentsViewModel(groupChat);
+            this.Title = groupChat.RoomTilte;
+        }
+
         protected override async void OnDisappearing() {
+            if (IsTappedToViewAttachment()) {
+                return;
+            }
+
             if (IsLeave)
             {
                 await _chatRoom.OnDisappearing();
@@ -27,6 +37,10 @@ namespace Pal.View
         }
 
         protected override async void OnAppearing() {
+            if (IsTappedToViewAttachment()) {
+                return;
+            }
+
             if (IsLeave)
             {
                 await _chatRoom.OnAppearing();
@@ -34,6 +48,16 @@ namespace Pal.View
             IsLeave = true;
         }
 
+        public bool IsTappedToViewAttachment() {
+
+            var currentPage = App.Current.MainPage.Navigation.NavigationStack;
+            if (currentPage[currentPage.Count - 1].GetType().ToString().Equals("Pal.View.WebViewAttachment"))
+            {
+                return true;
+            }
+            else { return false; }
+            
+        }
 
         private async void DestructTimer_Clicked(object sender, EventArgs e)
         {
@@ -59,18 +83,13 @@ namespace Pal.View
             var isPicked = await _chatRoom.PickAndShowFile();
             if (isPicked)
             {
-                AttachmentSection.IsVisible = true;
+                _chatRoom.DisplayAttachment();
             }
-            
         }
-
 
         private void BtnCancel_Clicked(object sender, EventArgs e)
         {
-            _chatRoom.Attachment = null;
-            _chatRoom.PickedFileData = null;
-            _chatRoom.FileName = null;
-            AttachmentSection.IsVisible = false;
+            _chatRoom.RemoveAttachment();
         }
     }
 }

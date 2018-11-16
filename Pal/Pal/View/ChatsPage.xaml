@@ -4,17 +4,16 @@
              x:Class="Pal.View.ChatsPage">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Name="Add Chat" Order="Secondary" Command="{Binding OnAddChatCommand}"/>
         <ToolbarItem Name="Friends List" Order="Secondary" Command="{Binding OnFriendsListCommand}"/>
         <ToolbarItem Name="Logout" Order="Secondary" Command="{Binding OnLogoutCommand}"/>
     </ContentPage.ToolbarItems>
+    
     <ContentPage.Content>
         <StackLayout>
-
-            <ListView x:Name="ChatRoomList" ItemTapped="ChatList_ItemTapped" ItemsSource="{Binding ChatRooms}">
+            <ListView x:Name="ChatRoomList" ItemTapped="ChatList_ItemTapped" ItemsSource="{Binding ChatRooms}" SelectionMode="None">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <ImageCell Text="{Binding RoomTilte}" Detail="{Binding LastMsg}" ImageSource="{Binding Image}"/>
+                        <ImageCell Text="{Binding RoomTilte}" ImageSource="{Binding Image}"/>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

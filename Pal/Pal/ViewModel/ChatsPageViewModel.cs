@@ -15,7 +15,7 @@ namespace Pal.ViewModel
 {
     public class ChatsPageViewModel : INotifyPropertyChanged
     {
-        public ObservableCollection<ChatRoom> ChatRooms { get; set; }
+        public ObservableCollection<object> ChatRooms { get; set; }
         public ICommand OnAddChatCommand { get; set; }
         public ICommand OnFriendsListCommand { get; set; }
         public ICommand OnLogoutCommand { get; set; }
@@ -23,16 +23,10 @@ namespace Pal.ViewModel
 
         public ChatsPageViewModel() {
 
-            
-            OnAddChatCommand = new Command(async () => 
-            {
-                await App.Current.MainPage.Navigation.PushAsync(new CreateChatRoomPage());
-            });
-
+            //FriendsList
             OnFriendsListCommand = new Command(async() => {
                 await App.Current.MainPage.Navigation.PushAsync(new FriendListPage());
             });
-
             //Logout
             OnLogoutCommand = new Command(() =>
             {
@@ -42,11 +36,19 @@ namespace Pal.ViewModel
         }
 
 
-        public async Task OnAppearing() {
+        public void OnPropertyChanged(String Property)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(Property));
+        }
+        public async Task InitialRoom() {
 
-            //List<ChatRoom> Temp = await DependencyService.Get<IFirebaseDatabase>().GetAllRoom();
-            
+            ChatRooms = await DependencyService.Get<IFirebaseDatabase>().GetAllRoom();
+            OnPropertyChanged("ChatRooms");
         }
 
+        public async Task SearchRoom(string Id) {
+
+
+        }
     }
 }

@@ -6,8 +6,7 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Icon="baseline_timer_white_24dp.png" Text="Self-Destruct"
-                     Clicked="DestructTimer_Clicked"
-                     />
+                     Clicked="DestructTimer_Clicked"/>
         <ToolbarItem Icon="round_attachment_white_24dp.png" Text="Attach" Clicked="AddAttachments_Clicked"/>
 
     </ContentPage.ToolbarItems>
@@ -34,8 +33,7 @@
                  HeightRequest="1"
                  BackgroundColor="LightGray"/>
 
-
-            <StackLayout x:Name="AttachmentSection" IsVisible="False" Orientation="Horizontal">
+            <StackLayout x:Name="AttachmentSection" IsVisible="{Binding AttachmentSection}" Orientation="Horizontal">
                 <Image 
                    Source="{Binding Attachment}" 
                    Aspect="AspectFit" 
@@ -46,8 +44,13 @@
                 <Button Text="Remove" Clicked="BtnCancel_Clicked"/>
             </StackLayout>
 
-            <StackLayout Orientation="Horizontal">
+            <StackLayout HorizontalOptions="CenterAndExpand" IsVisible="{Binding Uploading}" >
+                <ActivityIndicator IsVisible="{Binding Uploading}"
+                               IsRunning="{Binding Uploading}"/>
+                <Label Text="Uploading." IsVisible="{Binding Uploading}"/>
+            </StackLayout>
 
+            <StackLayout Orientation="Horizontal">
                 <Entry x:Name="chatTextInput"
                  Text="{Binding TextToSend}"
                  Margin="1"
@@ -63,7 +66,6 @@
                     WidthRequest="50"
                     BorderRadius="30"
                  Command="{Binding OnSendCommand}"/>
-
             </StackLayout>
         </StackLayout>
 

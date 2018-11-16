@@ -1,19 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Pal.View.CreateChatRoomPage">
+             x:Class="Pal.View.NewGroup">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Name="Create Chat Room" Icon="sharp_add_white_24dp.png" Command="{Binding OncreateRoomCommand}"/>
+        <ToolbarItem Icon="round_done_white_36dp.png"/>
     </ContentPage.ToolbarItems>
-    
-    
     <ContentPage.Content>
         <StackLayout>
-            <Entry Placeholder="Search" />
-            <ListView>
+            <Entry Placeholder="Enter chat room title." Text="{Binding RoomTitle}"/>
+
+            <ListView Header="Invited friends" ItemsSource="{Binding InvitedFriends}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <ImageCell Text="{Binding Email}" Detail="{Binding Username}"  ImageSource="{Binding Image}"/>
+                        <ImageCell Text="{Binding UserName}" Detail="{Binding Email}" ImageSource="blank_profile_picture_640.png"/>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

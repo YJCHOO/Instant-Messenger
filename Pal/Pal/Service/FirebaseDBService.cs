@@ -16,15 +16,16 @@ namespace Pal.Service
         void SetRead(Message message);
     
         Task<IndividualChatRoom> AddIndividualChatRoom(User user);
+        Task<GroupChatRoom> AddGroupChatRoom(GroupChatRoom groupChat);
         Task<IndividualChatRoom> SearchIndividualChatRoom(string userEmail);
-        //Task<List<object>> GetAllRoom();
+        Task<ObservableCollection<object>> GetAllRoom();
         Task<string> SetRoomDestruct(string roomId, bool destructStatus);
         Task<bool> DestructMessage(string MessagesId);
 
         void AddFriend(User user);
         Task<List<User>> GetFriendsList();
         Task<User> SearchUser(string email);
-
+        Task<object> SearchChatRoomById(string roomId);
         void ClearMessages();
 
 

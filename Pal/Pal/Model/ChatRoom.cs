@@ -23,5 +23,13 @@ namespace Pal.Model
             this.Image = "blank_profile_picture_640.png";
             IsDestruct = isDestruct;
         }
+
+        public ChatRoom(string roomID, string roomTilte, bool isDestruct,DateTime lastUpdate)
+        {
+            RoomID = roomID;
+            RoomTilte = roomTilte;
+            this.Image = "blank_profile_picture_640.png";
+            IsDestruct = isDestruct;
+        }
     }
 }
