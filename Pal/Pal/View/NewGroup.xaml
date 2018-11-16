@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Pal.View.NewGroup">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Icon="round_done_white_36dp.png"/>
+        <ToolbarItem Icon="round_done_white_36dp.png" Clicked="ToolbarItem_Clicked"/>
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <StackLayout>

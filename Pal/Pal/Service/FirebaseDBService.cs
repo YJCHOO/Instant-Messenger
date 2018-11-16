@@ -27,7 +27,7 @@ namespace Pal.Service
         Task<User> SearchUser(string email);
         Task<object> SearchChatRoomById(string roomId);
         void ClearMessages();
-
+        void ClearAllRooms();
 
 
     }

@@ -28,6 +28,13 @@ namespace Pal.View
             base.OnAppearing();
         }
 
+        protected override void OnDisappearing()
+        {
+            VM.StopListener();
+
+            base.OnDisappearing();
+        }
+
         public async void ChatList_ItemTapped(object sender, ItemTappedEventArgs e)
         {
             ChatRoomList.BeginRefresh();

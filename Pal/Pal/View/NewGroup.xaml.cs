@@ -29,5 +29,10 @@ namespace Pal.View
         protected override void OnAppearing() {
             vm.InitialNewGroup();
         }
-	}
+
+        private async void ToolbarItem_Clicked(object sender, EventArgs e)
+        {
+            await vm.CreateNewGroup();
+        }
+    }
 }

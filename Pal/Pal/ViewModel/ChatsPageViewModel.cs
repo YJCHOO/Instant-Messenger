@@ -41,14 +41,12 @@ namespace Pal.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(Property));
         }
         public async Task InitialRoom() {
-
             ChatRooms = await DependencyService.Get<IFirebaseDatabase>().GetAllRoom();
             OnPropertyChanged("ChatRooms");
         }
 
-        public async Task SearchRoom(string Id) {
-
-
+        public void StopListener() {
+            DependencyService.Get<IFirebaseDatabase>().ClearAllRooms();
         }
     }
 }

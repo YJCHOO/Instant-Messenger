@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -50,20 +51,29 @@ namespace Pal.ViewModel
                 }
                 else { await App.Current.MainPage.DisplayAlert("Something happen....", "Room unable to create.", "Ok"); }
             });
-
-
         }
 
         public void InitialNewGroup() {
-
-
             OnPropertyChanged("InvitedFriends");
-
         }
 
         public void OnPropertyChanged(String Property)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(Property));
         }
+
+        public async Task CreateNewGroup() {
+            if (string.IsNullOrWhiteSpace(RoomTitle))
+            {
+                await App.Current.MainPage.DisplayAlert("Something happen....", "Must have a room title.", "Ok");
+            }
+            else {
+
+                GroupChatRoom groupChatRoom = new GroupChatRoom("", RoomTitle, UserSetting.UserEmail, InvitedFriends, false);
+                var NewGroupChat= await DependencyService.Get<IFirebaseDatabase>().AddGroupChatRoom(groupChatRoom);
+                await App.Current.MainPage.Navigation.PushAsync(new ChatContents(NewGroupChat));
+            }
+        }
+
     }
 }

@@ -351,6 +351,14 @@ namespace Pal.Droid.Service
             this.messages = new ObservableCollection<Message>();
         }
 
+        public void ClearAllRooms() {
+            if (ReatimeListener != null)
+            {
+                ReatimeListener.Remove();
+                ReatimeListener = null;
+            }
+            this.Rooms = new ObservableCollection<object>();
+        }
 
 
         public Task<IndividualChatRoom> AddIndividualChatRoom(User user)
@@ -424,7 +432,7 @@ namespace Pal.Droid.Service
             TaskCompletionSource<ObservableCollection<object>> ResultCompletionSource = new TaskCompletionSource<ObservableCollection<object>>();
             
             Query query = Conn.Collection("roomList").WhereEqualTo("users." + UserSetting.UserEmail.Replace(".",":"), true);
-            query.AddSnapshotListener(new EventListener(async (Java.Lang.Object obj,FirebaseFirestoreException e) =>
+            ReatimeListener=query.AddSnapshotListener(new EventListener(async (Java.Lang.Object obj,FirebaseFirestoreException e) =>
             {
                 if (e != null)
                 {
@@ -468,13 +476,10 @@ namespace Pal.Droid.Service
                                             if (!key.Replace(":", ".").Equals(UserSetting.UserEmail)) {
                                                 RecipientEmail = key.Replace(":",".");
                                             }
-                                            
                                         }
                                     }
-
                                     string RecipientName = await GetUsername(RecipientEmail);
-                                    Rooms.Add(new IndividualChatRoom(Id, RecipientName, new User(RecipientEmail), isDestruct));
-
+                                    Rooms.Add(new IndividualChatRoom(Id, RecipientName, new User(RecipientEmail,RecipientName), isDestruct));
                                 }
                             }
                         }
