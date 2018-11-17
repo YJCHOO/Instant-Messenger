@@ -1,7 +1,9 @@
 ﻿
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
+using Android.Graphics;
 using Firebase.Storage;
 using Pal.Droid.EventListeners;
 using Pal.Model;
@@ -23,6 +25,7 @@ namespace Pal.Droid.Service
             TaskCompletionSource<Attachment> ResultCompletionSource = new TaskCompletionSource<Attachment>();
             string fileExtension = GetExtension(fileData.FileName);
             string fileNameStr = fileData.FileName;
+
             string path = "userFile/"+Guid.NewGuid().ToString()+ fileExtension;
 
             try

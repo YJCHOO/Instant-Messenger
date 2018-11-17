@@ -12,7 +12,7 @@
             <ListView Header="Invited friends" ItemsSource="{Binding InvitedFriends}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <ImageCell Text="{Binding UserName}" Detail="{Binding Email}" ImageSource="blank_profile_picture_640.png"/>
+                        <ImageCell Text="{Binding UserName}" Detail="{Binding Email}" ImageSource="{Binding UserImg}"/>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

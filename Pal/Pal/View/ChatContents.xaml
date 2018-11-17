@@ -20,6 +20,7 @@
     <ContentPage.Content>
         <StackLayout>
             <ListView 
+                CachingStrategy="RecycleElementAndDataTemplate"
                  ItemTemplate="{StaticResource MessageTemplateSelector}" 
                  ItemsSource="{Binding Messages}" 
                  Margin="0" 

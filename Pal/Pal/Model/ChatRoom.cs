@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.ObjectModel;
+using Xamarin.Forms;
 
 namespace Pal.Model
 {
@@ -13,14 +14,14 @@ namespace Pal.Model
 
         public ChatRoom()
         {
-            this.Image = "blank_profile_picture_640.png";
+            Image = "blank_profile_picture_640.png";
         }
 
         public ChatRoom(string roomID,string roomTilte,bool isDestruct)
         {
             RoomID = roomID;
             RoomTilte = roomTilte;
-            this.Image = "blank_profile_picture_640.png";
+            Image = "blank_profile_picture_640.png";
             IsDestruct = isDestruct;
         }
 
@@ -28,7 +29,7 @@ namespace Pal.Model
         {
             RoomID = roomID;
             RoomTilte = roomTilte;
-            this.Image = "blank_profile_picture_640.png";
+            Image = "blank_profile_picture_640.png";
             IsDestruct = isDestruct;
         }
     }

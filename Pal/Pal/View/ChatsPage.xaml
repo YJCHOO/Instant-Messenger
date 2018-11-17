@@ -14,6 +14,7 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ImageCell Text="{Binding RoomTilte}" ImageSource="{Binding Image}"/>
+
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

@@ -9,10 +9,13 @@ namespace Pal.Model
         public string UserName { get; set; }
         public string UserImg { get; set; }
 
-        public User() { }
+        public User() {
+            UserImg = "blank_profile_picture_640.png";
+        }
 
         public User(string email) {
             Email = email;
+            UserImg= "blank_profile_picture_640.png";
         }
 
         public User(string email, string userName)

@@ -399,9 +399,10 @@ namespace Pal.Droid.Service
             TaskCompletionSource<GroupChatRoom> ResultCompletionSource = new TaskCompletionSource<GroupChatRoom>();
             var members = new Android.Runtime.JavaDictionary<string, Java.Lang.Object>();
 
+            members.Add(UserSetting.UserEmail.ToLower().Replace(".", ":"), true);
             foreach (User user in groupChat._Users)
             {
-                members.Add(user.Email.ToLower(), true);
+                members.Add(user.Email.ToLower().Replace(".", ":"), true);
             }
 
             var GroupChatRoom = new Dictionary<string, Java.Lang.Object> {

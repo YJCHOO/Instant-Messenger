@@ -18,21 +18,18 @@ namespace Pal.View
 		{
             InitializeComponent ();
             this.BindingContext = VM;
-            base.OnAppearing();
         }
 
         protected override async void OnAppearing()
         {
+            ChatRoomList.BeginRefresh();
             await VM.InitialRoom();
-
-            base.OnAppearing();
+            ChatRoomList.EndRefresh();
         }
 
         protected override void OnDisappearing()
         {
             VM.StopListener();
-
-            base.OnDisappearing();
         }
 
         public async void ChatList_ItemTapped(object sender, ItemTappedEventArgs e)
