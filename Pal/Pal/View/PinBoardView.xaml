@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Pal.View.PinBoardView">
+    
+    <ContentPage.Content>
+        <StackLayout HorizontalOptions="FillAndExpand">
+            <!--Display for Admin only-->
+            <Button Text="Add" HorizontalOptions="CenterAndExpand" Command="{Binding OnAddCommand}" IsVisible="{Binding IsAdmin}"/>
+            <Button Text="Edit" HorizontalOptions="CenterAndExpand" Command="{Binding OnEditCommand}" IsVisible="{Binding IsAdmin}"/>
+            <!---->
+            <ListView>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout>
+                                <Label Text="{Binding}" /> <!--Title-->
+                                <Label LineBreakMode="WordWrap" Text="{Binding}"/> <!-- Description-->
+                                <StackLayout Orientation="Horizontal" IsVisible="{Binding}"><!--Attachment-->
+                                    <Image Source="{Binding}"/>
+                                    <Label Text="{Binding}"/>
+                                    <StackLayout.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
+                                    </StackLayout.GestureRecognizers>
+                                </StackLayout>
+                                <Label Text="{Binding}"/> <!--Admin name-->
+                                <Label Text="{Binding}"/> <!--Date-->
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

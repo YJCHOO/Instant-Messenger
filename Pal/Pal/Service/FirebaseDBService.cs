@@ -19,6 +19,12 @@ namespace Pal.Service
         Task<GroupChatRoom> AddGroupChatRoom(GroupChatRoom groupChat);
         Task<IndividualChatRoom> SearchIndividualChatRoom(string userEmail);
         Task<ObservableCollection<object>> GetAllRoom();
+
+
+        //Task<ObservableCollection<Board>> GetAllPinBoardMessage(string roomID);
+        Task<bool> AddPinBoardMessage(string roomID,Board boardMessage);
+
+
         Task<string> SetRoomDestruct(string roomId, bool destructStatus);
         Task<bool> DestructMessage(string MessagesId);
 

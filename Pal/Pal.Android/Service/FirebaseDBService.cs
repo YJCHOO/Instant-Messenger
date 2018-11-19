@@ -428,6 +428,30 @@ namespace Pal.Droid.Service
             return ResultCompletionSource.Task;
         }
 
+        public Task<bool> AddPinBoardMessage(string roomID,Board boardMessage) {
+
+            TaskCompletionSource<bool> ResultCompletionSource = new TaskCompletionSource<bool>();
+            var PinBoardMessage = new Dictionary<string, Java.Lang.Object> {
+                {"roomId",roomID},
+                {"title",boardMessage.Title},
+                {"description",boardMessage.Description },
+                {"attachmentFileName",boardMessage._Attachment.FileName},
+                {"attachment",boardMessage._Attachment.AttachmentUri },
+                {"userName",boardMessage._User.UserName},
+                {"userEmail",boardMessage._User.Email }
+            };
+
+            Conn.Collection("PinBoard").Add(PinBoardMessage)
+                .AddOnCompleteListener(new OnCompleteEventHandleListener((Android.Gms.Tasks.Task obj)=> {
+                    if (obj.IsSuccessful)
+                        ResultCompletionSource.SetResult(true);
+                    else
+                        ResultCompletionSource.SetResult(false);
+                }));
+            return ResultCompletionSource.Task;
+        }
+
+
         public Task<ObservableCollection<object>> GetAllRoom()
         {
             TaskCompletionSource<ObservableCollection<object>> ResultCompletionSource = new TaskCompletionSource<ObservableCollection<object>>();

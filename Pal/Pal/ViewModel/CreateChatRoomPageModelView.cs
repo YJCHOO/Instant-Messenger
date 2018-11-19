@@ -47,7 +47,7 @@ namespace Pal.ViewModel
                 GroupChatRoom groupChatRoom = await DependencyService.Get<IFirebaseDatabase>().AddGroupChatRoom(NewGroup);
                 if (groupChatRoom != null)
                 {
-                    await App.Current.MainPage.Navigation.PushAsync(new ChatContents(groupChatRoom));
+                    await App.Current.MainPage.Navigation.PushAsync(new GroupChatContents(groupChatRoom));
                 }
                 else { await App.Current.MainPage.DisplayAlert("Something happen....", "Room unable to create.", "Ok"); }
             });
@@ -71,7 +71,7 @@ namespace Pal.ViewModel
 
                 GroupChatRoom groupChatRoom = new GroupChatRoom("", RoomTitle, UserSetting.UserEmail, InvitedFriends, false);
                 var NewGroupChat= await DependencyService.Get<IFirebaseDatabase>().AddGroupChatRoom(groupChatRoom);
-                await App.Current.MainPage.Navigation.PushAsync(new ChatContents(NewGroupChat));
+                await App.Current.MainPage.Navigation.PushAsync(new GroupChatContents(NewGroupChat));
             }
         }
 

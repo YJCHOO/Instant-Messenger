@@ -22,5 +22,10 @@ namespace Pal.View.CustomViewCell
             var uri = DocUri.Text;
             await Application.Current.MainPage.Navigation.PushAsync(new WebViewAttachment(uri));
         }
+
+        private void PinItem_Clicked(object sender, EventArgs e)
+        {
+
+        }
     }
 }

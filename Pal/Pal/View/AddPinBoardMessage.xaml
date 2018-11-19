@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Pal.View.AddPinBoardMessage">
+    <ContentPage.Content>
+        <StackLayout>
+            <Entry x:Name="MessageTitle" Text="{Binding BoardMessageTitle}" />
+            <Editor x:Name="Description" Text="{Binding Description}" />
+            <Label Text="{Binding }" IsVisible="{Binding}"/>
+            <Button Text="Attach File" Clicked="AddAttachment_Clicked"/>
+            <Button Text="Post" Clicked="Post_Clicked"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

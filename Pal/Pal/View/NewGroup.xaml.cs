@@ -23,7 +23,6 @@ namespace Pal.View
             vm = new CreateChatRoomPageModelView();
             this.BindingContext = vm;
             vm.InvitedFriends = InvitedFriends;
-
 		}
 
         protected override void OnAppearing() {

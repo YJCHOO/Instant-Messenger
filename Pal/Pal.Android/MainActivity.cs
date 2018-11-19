@@ -24,10 +24,7 @@ namespace Pal.Droid
             base.OnCreate(savedInstanceState);
             InitiFirebaseAuth();
             Plugin.CurrentActivity.CrossCurrentActivity.Current.Init(this, savedInstanceState);
-            Rg.Plugins.Popup.Popup.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
-
-
             LoadApplication(new App());
         }
 

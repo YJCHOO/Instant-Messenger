@@ -24,14 +24,11 @@ namespace Pal.ViewModel
         public string TextToSend { get; set; }
         public ICommand OnSendCommand { get; set; }
         public ChatRoom ChatRoom = new ChatRoom();
-        public event PropertyChangedEventHandler PropertyChanged;
+        public GroupChatRoom GroupChatRoom = new GroupChatRoom();
         public bool AttachmentSection { get; set; } = false;
         public bool Uploading { get; set; } = false;
-
-        public string Attachment { get; set; }
-        public string FileName { get; set; }
-        public FileData PickedFileData = null;
-        
+        public Attachment Attachment { get; set; } = new Attachment();
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public ChatContentsViewModel(object objChatRoom)
         {
@@ -44,17 +41,17 @@ namespace Pal.ViewModel
                     return;
                 }
 
-                if (!string.IsNullOrEmpty(TextToSend) || PickedFileData != null)
+                if (!string.IsNullOrEmpty(TextToSend) || Attachment._FileData != null)
                 {
                     
                     Attachment attachmentType = new Attachment() ;
-                    if (PickedFileData != null)
+                    if (Attachment._FileData != null)
                     {
                         Uploading = true;
                         AttachmentSection = false;
                         OnPropertyChanged("Uploading");
                         OnPropertyChanged("AttachmentSection");
-                        attachmentType = await UploadFile(PickedFileData);
+                        attachmentType = await UploadFile(Attachment._FileData);
                         Uploading = false;
                         OnPropertyChanged("Uploading");
                     }
@@ -65,6 +62,7 @@ namespace Pal.ViewModel
 
                     TextToSend = string.Empty;
                     AttachmentSection = false;
+                    RemoveAttachment();
                     OnPropertyChanged("TextToSend");
                     OnPropertyChanged("AttachmentSection");
                 }
@@ -76,8 +74,10 @@ namespace Pal.ViewModel
         {
             if (objChatRoom.GetType() == typeof(IndividualChatRoom))
                 ChatRoom = (IndividualChatRoom)objChatRoom;
-            else
+            else {
                 ChatRoom = (GroupChatRoom)objChatRoom;
+                GroupChatRoom = (GroupChatRoom)objChatRoom;
+            }
         }
 
         public async Task OnAppearing() {
@@ -116,17 +116,20 @@ namespace Pal.ViewModel
         }
         
         public async Task<bool> PickAndShowFile() {
-            //Check Permission
-            if (!await this.CheckPermissionsAsync())
-            {
+
+            FilePicker _FilePicker = FilePicker.GetInstance();
+            string thumbnail = null;
+
+
+            if (!await _FilePicker.CheckPermission()) {
                 return false;
             }
 
             string CheckType=null;
-            var pickedFile = await CrossFilePicker.Current.PickFile();
+            var pickedFile = await _FilePicker.PickAndShowFile();
             if (pickedFile == null){ return false; }
             else { 
-                CheckType = IsSupportedType(pickedFile.FileName);
+                CheckType = _FilePicker.IsSupportedType(pickedFile.FileName);
 
                 if (CheckType == null)
                 {
@@ -136,80 +139,29 @@ namespace Pal.ViewModel
 
                 switch (CheckType) {
                     case "Img":
-                        Attachment = pickedFile.FilePath;
+                        thumbnail = pickedFile.FilePath;
                         break;
 
                     case "Video":
-                        Attachment = "round_movie_black_48.png";
+                        thumbnail = "round_movie_black_48.png";
                         break;
 
                     case "PDF":
-                        Attachment = "round_insert_drive_file_black_48.png";
+                        thumbnail = "round_insert_drive_file_black_48.png";
                         break;
                 }
-                FileName = "Attachment: " + pickedFile.FileName;
-
-                this.OnPropertyChanged("Attachment");
-                this.OnPropertyChanged("FileName");
-                PickedFileData = pickedFile;
+                Attachment.FileName=pickedFile.FileName;
+                Attachment.Thumbnail = thumbnail;
+                Attachment._FileData = pickedFile;
+                OnPropertyChanged("Attachment");
                 return true;
             }
         }
 
-        private string IsSupportedType(string FileType) {
-
-            string Type = null;
-
-            if (FileType.EndsWith("jpg", StringComparison.OrdinalIgnoreCase) ||
-                   FileType.EndsWith("png", StringComparison.OrdinalIgnoreCase))
-                Type = "Img";
-            else if (FileType.EndsWith("mp4", StringComparison.OrdinalIgnoreCase))
-                Type = "Video";
-            else if (FileType.EndsWith("pdf", StringComparison.OrdinalIgnoreCase))
-                Type = "PDF";
-            return Type;
-        }
 
         private async Task<Attachment> UploadFile(FileData FileStream) {
                var url =  await DependencyService.Get<IFirebaseStorage>().UploadFile(FileStream);
             return url;
-        }
-
-        private async Task<bool> CheckPermissionsAsync()
-        {
-            try
-            {
-                var status = await CrossPermissions.Current.CheckPermissionStatusAsync(Permission.Storage);
-                if (status != PermissionStatus.Granted)
-                {
-                    if (await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(Permission.Storage))
-                    {
-                        await App.Current.MainPage.DisplayAlert("Xamarin.Forms Sample", "Storage permission is needed for file picking", "OK");
-                    }
-
-                    var results = await CrossPermissions.Current.RequestPermissionsAsync(Permission.Storage);
-
-                    if (results.ContainsKey(Permission.Storage))
-                    {
-                        status = results[Permission.Storage];
-                    }
-                }
-
-                if (status == PermissionStatus.Granted)
-                {
-                    return true;
-                }
-                else if (status != PermissionStatus.Unknown)
-                {
-                    await App.Current.MainPage.DisplayAlert("Xamarin.Forms Sample", "Storage permission was denied.", "OK");
-                }
-
-                return false;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
         }
 
         public void DisplayAttachment() {
@@ -219,12 +171,9 @@ namespace Pal.ViewModel
         }
 
         public void RemoveAttachment() {
-            Attachment = null;
-            PickedFileData = null;
-            FileName = null;
+            Attachment = new Attachment();
             AttachmentSection = false;
             OnPropertyChanged("AttachmentSection");
-
         } 
 
 

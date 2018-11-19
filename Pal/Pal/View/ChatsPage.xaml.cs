@@ -40,7 +40,7 @@ namespace Pal.View
                 await App.Current.MainPage.Navigation.PushAsync(new ChatContents((IndividualChatRoom)e.Item));
             }
             else {
-                await App.Current.MainPage.Navigation.PushAsync(new ChatContents((GroupChatRoom)e.Item));
+                await App.Current.MainPage.Navigation.PushAsync(new GroupChatContents((GroupChatRoom)e.Item));
             }
             ChatRoomList.EndRefresh();
         }

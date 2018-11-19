@@ -19,11 +19,6 @@ namespace Pal.View
             this.Title = SelectedUser._User.UserName;
         }
 
-        public ChatContents(GroupChatRoom groupChat) {
-            InitializeComponent();
-            this.BindingContext = _chatRoom = new ChatContentsViewModel(groupChat);
-            this.Title = groupChat.RoomTilte;
-        }
 
         protected override async void OnDisappearing() {
             if (IsTappedToViewAttachment()) {
@@ -91,5 +86,6 @@ namespace Pal.View
         {
             _chatRoom.RemoveAttachment();
         }
+
     }
 }

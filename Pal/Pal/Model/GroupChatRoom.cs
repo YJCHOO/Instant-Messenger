@@ -16,5 +16,8 @@ namespace Pal.Model
 
         }
 
+        public GroupChatRoom()
+        {
+        }
     }
 }

@@ -2,13 +2,14 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:Pal.ViewModel"
-             x:Class="Pal.View.ChatContents">
+             x:Class="Pal.View.GroupChatContents">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Icon="round_attachment_white_24dp.png"  Text="Attach"            Clicked="AddAttachments_Clicked"/>
-        <ToolbarItem Icon="outline_schedule_white_36dp.png" Text="Self-Destruct"     Clicked="DestructTimer_Clicked"/>
+        <ToolbarItem Icon="round_notes_white_36dp.png"      Text="PinBoard"          Clicked="PinBoard_Clicked"  Order="Primary"/>
+        <ToolbarItem Icon="round_attachment_white_24dp.png" Text="Attach"            Clicked="AddAttachments_Clicked" Order="Secondary"/>
+        <ToolbarItem Icon="outline_schedule_white_36dp.png" Text="Self-Destruct"     Clicked="ScheduleDestruct_Clicked" Order="Secondary"/>
     </ContentPage.ToolbarItems>
-    
+
     <ContentPage.Resources>
         <ResourceDictionary>
             <local:ChatTemplateSelector x:Key="MessageTemplateSelector"/>
@@ -35,7 +36,8 @@
                  BackgroundColor="LightGray"/>
             <!---->
             
-            <!--Attachment--> <!--isVisible=false-->
+            <!--Attachment-->
+            <!--isVisible=false-->
             <StackLayout x:Name="AttachmentSection" IsVisible="{Binding AttachmentSection}" Orientation="Horizontal">
                 <Image 
                    Source="{Binding Attachment.Thumbnail}" 

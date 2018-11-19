@@ -2,6 +2,10 @@
 <ViewCell xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Pal.View.CustomViewCell.IncomingDocAttachmentViewCell">
+    <ViewCell.ContextActions>
+        <MenuItem Text="Pin" Icon="round_turned_in_white_36dp.png" Clicked="PinItem_Clicked"/>
+    </ViewCell.ContextActions>
+    
     <Frame BackgroundColor="LightBlue"
            Padding="10"
            HasShadow="False"
@@ -21,7 +25,6 @@
                 <StackLayout.GestureRecognizers>
                     <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
                 </StackLayout.GestureRecognizers>
-                
             </StackLayout>
 
             <Label Text="{Binding Text}"
