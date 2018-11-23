@@ -22,8 +22,10 @@ namespace Pal.Model
             AttachmentUri = attachmentUri;
         }
 
-        public Attachment(string fileName, string thumbnail, FileData FileData) : this(fileName, thumbnail)
+        public Attachment(string fileName, string thumbnail, FileData FileData)
         {
+            FileName = fileName;
+            Thumbnail = thumbnail;
             _FileData = FileData;
         }
     }

@@ -15,6 +15,7 @@ namespace Pal.ViewModel
     {
         public ObservableCollection<User> FriendsList { get; set; }
         public ObservableCollection<User> SearchUserResult { get; set; }
+        public ICommand OnDeleteFriendCommand { get; set; }
         public string SearchResultLbl { get; set; }
         public string SearchText { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
@@ -22,6 +23,21 @@ namespace Pal.ViewModel
         public FriendListPageViewModel() {
             FriendsList = new ObservableCollection<User>();
             SearchUserResult = new ObservableCollection<User>();
+
+            OnDeleteFriendCommand = new Command<string>(async (string FriendEmail) => 
+            {
+
+                var IsCompleted =  await DependencyService.Get<IFirebaseDatabase>().RemoveFriend(FriendEmail);
+                if (IsCompleted)
+                {
+                    await App.Current.MainPage.DisplayAlert("Done", "User " + FriendEmail + "deleted from your FriendList", "Ok");
+                }
+                else
+                {
+                    await App.Current.MainPage.DisplayAlert("Something wrong ....", "Friend unable to delete, please try again", "Ok");
+                }
+
+            });
         }
 
         public async Task<ObservableCollection<User>> GetSearchResult(string email) {

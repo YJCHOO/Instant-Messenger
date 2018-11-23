@@ -1,4 +1,5 @@
 ﻿using Pal.Model;
+using Plugin.FilePicker.Abstractions;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -21,9 +22,8 @@ namespace Pal.Service
         Task<ObservableCollection<object>> GetAllRoom();
 
 
-        //Task<ObservableCollection<Board>> GetAllPinBoardMessage(string roomID);
-        Task<bool> AddPinBoardMessage(string roomID,Board boardMessage);
-
+        Task<ObservableCollection<Board>> GetAllPinBoardMessage(string roomID);
+        Task<bool> AddPinBoardMessage(string roomID, Board boardMessage);
 
         Task<string> SetRoomDestruct(string roomId, bool destructStatus);
         Task<bool> DestructMessage(string MessagesId);
@@ -34,6 +34,9 @@ namespace Pal.Service
         Task<object> SearchChatRoomById(string roomId);
         void ClearMessages();
         void ClearAllRooms();
+        Task<bool> RemoveFriend(string FriendEmail);
+        Task<bool> RemovePinBoardMessage(string PinBoardMessageId);
+
 
 
     }

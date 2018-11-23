@@ -10,11 +10,10 @@
     
     <ContentPage.Content>
         <StackLayout>
-            <ListView x:Name="ChatRoomList" ItemTapped="ChatList_ItemTapped" ItemsSource="{Binding ChatRooms}" SelectionMode="None">
+            <ListView x:Name="ChatRoomList" ItemTapped="ChatList_ItemTapped" ItemsSource="{Binding ChatRooms}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ImageCell Text="{Binding RoomTilte}" ImageSource="{Binding Image}"/>
-
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

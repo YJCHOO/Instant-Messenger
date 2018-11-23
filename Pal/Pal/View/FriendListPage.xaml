@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Pal.View.FriendListPage"
+             x:Name="FriendListPageViewModel"
              Title="Friends">
     <ContentPage.ToolbarItems>
         <ToolbarItem  Icon="round_group_add_white_24dp.png" Text="New group" Clicked="NewGroup_Clicked"/>
@@ -14,7 +15,12 @@
             <ListView x:Name="FriendsListView" Header="Friends" ItemsSource="{Binding FriendsList}" ItemTapped="FriendsListView_ItemTapped">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <ImageCell Text="{Binding UserName}" Detail="{Binding Email}" ImageSource="{Binding UserImg}"/>
+                        <ImageCell Text="{Binding UserName}" Detail="{Binding Email}" ImageSource="{Binding UserImg}">
+                            <ImageCell.ContextActions>
+                                <MenuItem Icon="round_person_add_disabled_white_24dp.png" Command="{Binding BindingContext.OnDeleteFriendCommand,Source={x:Reference FriendListPageViewModel}}" CommandParameter="{Binding Email}"/>
+                            </ImageCell.ContextActions>
+                        </ImageCell>
+
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

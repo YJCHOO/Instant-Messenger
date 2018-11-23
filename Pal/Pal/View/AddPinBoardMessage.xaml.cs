@@ -16,15 +16,5 @@ namespace Pal.View
             InitializeComponent();
             BindingContext = VM = new PinBoardViewModel(groupChatRoom);
 		}
-
-        private async void AddAttachment_Clicked(object sender, EventArgs e)
-        {
-            var attachment = await VM.AddAttachment();
-        }
-
-        private void Post_Clicked(object sender, EventArgs e)
-        {
-
-        }
     }
 }
