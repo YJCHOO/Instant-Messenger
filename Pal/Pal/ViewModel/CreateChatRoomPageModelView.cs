@@ -24,12 +24,11 @@ namespace Pal.ViewModel
 
         public CreateChatRoomPageModelView() {
             InviteList = new ObservableCollection<SelectableData<User>>();
-            InvitedFriends = new ObservableCollection<User>();
-
             OnNextRoomTitle = new Command(async () =>
             {
+                InvitedFriends = new ObservableCollection<User>();
                 foreach (SelectableData<User> user in InviteList) {
-                    if (user.Selected) {
+                    if (user.Selected && !InvitedFriends.Contains(user.Data)) {
                         InvitedFriends.Add(user.Data);
                     }
                 }
@@ -41,16 +40,17 @@ namespace Pal.ViewModel
 
                 await App.Current.MainPage.Navigation.PushAsync(new NewGroup(InvitedFriends));
             });
-            OnCreateNewGroup = new Command(async () => {
+            //OnCreateNewGroup = new Command(async () => {
 
-                var NewGroup = new GroupChatRoom("", RoomTitle, "",InvitedFriends, false);
-                GroupChatRoom groupChatRoom = await DependencyService.Get<IFirebaseDatabase>().AddGroupChatRoom(NewGroup);
-                if (groupChatRoom != null)
-                {
-                    await App.Current.MainPage.Navigation.PushAsync(new GroupChatContents(groupChatRoom));
-                }
-                else { await App.Current.MainPage.DisplayAlert("Something happen....", "Room unable to create.", "Ok"); }
-            });
+            //    var NewGroup = new GroupChatRoom("", RoomTitle, "",InvitedFriends, false);
+            //    GroupChatRoom groupChatRoom = await DependencyService.Get<IFirebaseDatabase>().AddGroupChatRoom(NewGroup);
+            //    if (groupChatRoom != null)
+            //    {
+            //        await App.Current.MainPage.Navigation.PopToRootAsync();
+            //        await App.Current.MainPage.Navigation.PushAsync(new GroupChatContents(groupChatRoom));
+            //    }
+            //    else { await App.Current.MainPage.DisplayAlert("Something happen....", "Room unable to create.", "Ok"); }
+            //});
         }
 
         public void InitialNewGroup() {

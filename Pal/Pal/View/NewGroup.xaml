@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Pal.View.NewGroup">
+             x:Class="Pal.View.NewGroup"
+             Title="New group">
     <ContentPage.ToolbarItems>
         <ToolbarItem Icon="round_done_white_36dp.png" Clicked="ToolbarItem_Clicked"/>
     </ContentPage.ToolbarItems>

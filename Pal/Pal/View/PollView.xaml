@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Pal.View.PollView"
+             x:Name="PollViewModel"
+             Title="Poll">
+    <ContentPage.Content>
+        
+        <StackLayout>
+
+            <Button Text="Create Poll" Command="{Binding OnCreatePollCommand}" IsVisible="{Binding IsAdmin}"/>
+            <Label Text="{Binding _Poll.Title}"/>
+            <ListView x:Name="OptionsList" ItemsSource="{Binding Option}" Header="Slide the switch to void" >
+                <ListView.ItemTemplate>
+                <DataTemplate>
+                        <ViewCell>
+                        <StackLayout HorizontalOptions="FillAndExpand"  Orientation="Horizontal">
+                            <Label Text="{Binding Data}"/>
+                                <Switch IsToggled="{Binding Selected}" Toggled="Switch_Toggled"  HorizontalOptions="EndAndExpand"/>
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+
+            </ListView>
+
+
+            <Button Text="Check Result" Command="{Binding OnCheckResult}"/>
+            <Button Text="Close Poll" Command="{Binding OnCloseCommand}" IsVisible="{Binding IsAdmin}"/>
+
+
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

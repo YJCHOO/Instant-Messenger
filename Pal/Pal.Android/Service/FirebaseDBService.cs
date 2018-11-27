@@ -21,6 +21,7 @@ namespace Pal.Droid.Service
         private const string usercollection = "users";
         private const string friendsListCollection = "friendsList";
         private const string pinBoardCollection = "pinBoard";
+        private const string pollCollection = "poll";
 
         private FirebaseFirestore Conn = FirebaseFirestore.GetInstance(MainActivity.app);
         private IListenerRegistration ReatimeListener = null;
@@ -35,7 +36,7 @@ namespace Pal.Droid.Service
             TaskCompletionSource<IndividualChatRoom> ResultCompletionSource = new TaskCompletionSource<IndividualChatRoom>();
             Android.Runtime.JavaDictionary<string, Java.Lang.Object> chatRoomUser = new Android.Runtime.JavaDictionary<string, Java.Lang.Object>
             {
-                { user.Email.Replace(".", ":"), false },
+                { user.Email.Replace(".", ":"), true },
                 { UserSetting.UserEmail.Replace(".", ":"), true }
             };
 
@@ -132,6 +133,37 @@ namespace Pal.Droid.Service
                 }));
             return ResultCompletionSource.Task;
         }
+        public Task<bool> AddPoll(Poll poll) {
+
+            TaskCompletionSource<bool> ResultCompletionSource = new TaskCompletionSource<bool>();
+
+            var Option = new Android.Runtime.JavaDictionary<string, Java.Lang.Object>();
+            var Result = new Android.Runtime.JavaDictionary<string, Java.Lang.Object>();
+            foreach ( string _Option in poll._Option ) {
+                Option.Add(_Option, true);
+            }
+
+            var Poll = new Dictionary<string, Java.Lang.Object>
+            {
+                {"roomID",poll.RoomId },
+                {"title",poll.Title },
+                {"isClose",poll.IsClose },
+                {"option",Option },
+                {"result",Result},
+                { "dateTime",new Java.Util.Date()}
+            };
+
+            Conn.Collection(pollCollection).Add(Poll).AddOnCompleteListener(new OnCompleteEventHandleListener((Android.Gms.Tasks.Task obj)=>{
+
+                if (obj.IsSuccessful)
+                {
+                    ResultCompletionSource.SetResult(true);
+                }
+                else { ResultCompletionSource.SetResult(false);
+                }
+            }));
+            return ResultCompletionSource.Task;
+        }
 
         //Upadate
         public Task<bool> DestructMessage(String MessagesId) {
@@ -203,6 +235,29 @@ namespace Pal.Droid.Service
             ReadMessage.Add(UserSetting.UserEmail.Replace(".", ":"), false);
 
             Conn.Collection("messages").Document(message.MessageId).Update("UserRead", ReadMessage);
+        }
+        public Task<bool> UpdateResult(Poll poll)
+        {
+            TaskCompletionSource<bool> ResultCompletionSource = new TaskCompletionSource<bool>();
+            Android.Runtime.JavaDictionary<string, Java.Lang.Object> Result = new Android.Runtime.JavaDictionary<string, Java.Lang.Object>();
+            foreach (string email in poll.Result.Keys)
+            {
+                Result.Add(email, poll.Result[email].ToString());
+            }
+
+            var Path = Conn.Collection(pollCollection).Document(poll.PollId);
+            Path.Update("result", Result).AddOnCompleteListener(new OnCompleteEventHandleListener((Android.Gms.Tasks.Task obj) => 
+            {
+                if (obj.IsSuccessful)
+                {
+                    ResultCompletionSource.SetResult(true);
+                }
+                else
+                {
+                    ResultCompletionSource.SetResult(false);
+                }
+            }));
+            return ResultCompletionSource.Task;
         }
 
         //Retrieve
@@ -577,7 +632,66 @@ namespace Pal.Droid.Service
             ResultCompletionSource.SetResult(chatRoom);
             return ResultCompletionSource.Task;
         }
+        public Task<Poll> GetLastestPoll(string roomId) {
 
+            TaskCompletionSource<Poll> ResultCompletionSource = new TaskCompletionSource<Poll>();
+            var Path = Conn.Collection(pollCollection);
+            Path.OrderBy("dateTime", Query.Direction.Descending).Limit(1).AddSnapshotListener(new EventListener((Java.Lang.Object obj, FirebaseFirestoreException e) =>
+             {
+                 if (e != null)
+                 {
+                     ResultCompletionSource.SetException(e);
+                     return;
+                 }
+                 else
+                 {
+                     QuerySnapshot querySnapshot = (QuerySnapshot)obj;
+                     if (!querySnapshot.IsEmpty)
+                     {
+                         foreach (DocumentChange documentChange in querySnapshot.DocumentChanges)
+                         {
+                             if (documentChange.GetType() == DocumentChange.Type.Added)
+                             {
+                                 var temp = documentChange.Document.Data;
+                                 var Id = (string)documentChange.Document.Id;
+                                 var RoomId = (string)temp["roomID"];
+                                 var Title = (string)temp["title"];
+                                 var IsClose = (bool)temp["isClose"];
+                                 var Option = (Android.Runtime.JavaDictionary)temp["option"];
+                                 var Result = (Android.Runtime.JavaDictionary)temp["result"];
+
+                                 ObservableCollection<string> _Option = new ObservableCollection<string>();
+                                 var _Result = new Dictionary<string, string>();
+                                 if (Option.Count != 0)
+                                 {
+                                     foreach (string key in Option.Keys)
+                                     {
+                                         _Option.Add(key);
+                                     }
+                                 }
+                                 if (Result!=null)
+                                 {
+                                     
+                                     foreach (string key in Result.Keys)
+                                     {
+                                         _Result.Add(key, Result[key].ToString());
+                                     }
+                                 }
+                                 Poll poll = new Poll(Id, RoomId, Title, IsClose, _Option, _Result);
+                                 ResultCompletionSource.TrySetResult(poll);
+                             }
+                             else
+                             {
+
+                                 ResultCompletionSource.TrySetResult(null);
+                             }
+                         }
+                     }
+                 }
+             }));
+
+            return ResultCompletionSource.Task;
+        }
         //Remove
         public Task<bool> RemovePinBoardMessage(string PinBoardMessageId) {
             TaskCompletionSource<bool> ResultCompletionSource = new TaskCompletionSource<bool>();

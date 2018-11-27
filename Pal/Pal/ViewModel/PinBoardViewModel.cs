@@ -174,6 +174,11 @@ namespace Pal.ViewModel
 
         }
 
+        public void OnDisappearing()
+        {
+            DependencyService.Get<IFirebaseDatabase>().ClearAllPinBoardMessage();
+        }
+
         public void RemoveAttachment() {
             BoardMessageAttachment = new Attachment();
             IsAttach = false;

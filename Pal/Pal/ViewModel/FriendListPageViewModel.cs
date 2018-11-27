@@ -72,7 +72,6 @@ namespace Pal.ViewModel
             var result = await DependencyService.Get<IFirebaseDatabase>().SearchIndividualChatRoom(user.Email);
             if (result == null)
             {
-
                var individualChatRoom =  await CreateIndividualChatRoom(user);
                 result = individualChatRoom;
             }

@@ -101,5 +101,10 @@ namespace Pal.View
         {
             await App.Current.MainPage.Navigation.PushAsync(new PinBoardView(VM.GroupChatRoom));
         }
+
+        private async void ToolbarItem_Clicked(object sender, EventArgs e)
+        {
+            await App.Current.MainPage.Navigation.PushAsync(new PollView(VM.GroupChatRoom));
+        }
     }
 }

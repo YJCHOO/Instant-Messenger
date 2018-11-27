@@ -24,7 +24,12 @@ namespace Pal.View
             await VM.InitialBoardListAsync();
         }
 
-       
+
+        protected override void OnDisappearing()
+        {
+            VM.OnDisappearing();
+        }
+
 
         private async void AddBtn_Clicked(object sender, EventArgs e)
         {

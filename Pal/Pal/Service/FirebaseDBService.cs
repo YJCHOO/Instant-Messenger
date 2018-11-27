@@ -36,8 +36,9 @@ namespace Pal.Service
         void ClearAllRooms();
         Task<bool> RemoveFriend(string FriendEmail);
         Task<bool> RemovePinBoardMessage(string PinBoardMessageId);
-
-
-
+        Task<bool> AddPoll(Poll poll);
+        Task<Poll> GetLastestPoll(string roomId);
+        Task<bool> UpdateResult(Poll poll);
+        void ClearAllPinBoardMessage();
     }
 }

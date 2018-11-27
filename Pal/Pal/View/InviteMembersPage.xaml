@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Pal.View.InviteMembersPage">
+             x:Class="Pal.View.InviteMembersPage"
+             Title="Inviting members">
     <ContentPage.ToolbarItems>
         <ToolbarItem Name="Next" Icon="round_navigate_next_white_24dp.png" Command="{Binding OnNextRoomTitle}"/>
     </ContentPage.ToolbarItems>

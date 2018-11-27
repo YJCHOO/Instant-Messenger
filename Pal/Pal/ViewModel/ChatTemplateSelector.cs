@@ -47,7 +47,7 @@ namespace Pal.ViewModel
             if (string.Compare(messageVm.SenderEmail, UserSetting.UserEmail) == 0) 
             {
                 //outgoing 
-                if (string.Compare(messageVm.AttachmentFileName, null) == 0)
+                if (string.IsNullOrEmpty(messageVm.AttachmentUri))
                 {
 
                     return OutgoingDataTemplate;
@@ -73,9 +73,8 @@ namespace Pal.ViewModel
             else {
 
                 //incoming
-                if (string.Compare(messageVm.AttachmentFileName, null) == 0)
+                if (string.IsNullOrEmpty(messageVm.AttachmentUri))
                 {
-
                     return IncomingDataTemplate;
                 }
                 else if (messageVm.AttachmentFileName.EndsWith("jpg", StringComparison.CurrentCultureIgnoreCase) || messageVm.AttachmentFileName.EndsWith("png", StringComparison.CurrentCultureIgnoreCase))
@@ -90,7 +89,6 @@ namespace Pal.ViewModel
                 }
                 else
                 {
-
                     return IncomingDocAttachmentViewCell;
                 }
             }
