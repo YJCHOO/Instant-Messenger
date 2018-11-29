@@ -126,9 +126,14 @@ namespace Pal.ViewModel
                 }
             });
 
-            OnCloseCommand = new Command(() => 
+            OnCloseCommand = new Command(async () => 
             {
-
+                if (_Poll.IsClose) {
+                    await App.Current.MainPage.DisplayAlert("Something wrong....","This Poll already closed","Ok");
+                    return;
+                }
+                
+                //await DependencyService.Get<IFirebaseDatabase>().
 
             });
         }
