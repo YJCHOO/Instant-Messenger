@@ -1,9 +1,6 @@
 ﻿
 using System;
-using System.Diagnostics;
-using System.IO;
 using System.Threading.Tasks;
-using Android.Graphics;
 using Firebase.Storage;
 using Pal.Droid.EventListeners;
 using Pal.Model;
@@ -21,7 +18,6 @@ namespace Pal.Droid.Service
 
         public Task<Attachment> UploadFile(FileData fileData)
         {
-            
             TaskCompletionSource<Attachment> ResultCompletionSource = new TaskCompletionSource<Attachment>();
             string fileExtension = GetExtension(fileData.FileName);
             string fileNameStr = fileData.FileName;
@@ -47,7 +43,37 @@ namespace Pal.Droid.Service
                 }));
             }
             catch (Exception e) {
-                Debug.Write(e.Message);
+                ResultCompletionSource.TrySetException(e);
+            }
+            return ResultCompletionSource.Task;
+        }
+
+        public Task<string> UploadMoments(FileData fileData)
+        {
+            TaskCompletionSource<string> ResultCompletionSource = new TaskCompletionSource<string>();
+            string fileExtension = GetMomentExtension(fileData.FileName);
+            string fileNameStr = fileData.FileName;
+
+            string path = "moments/" + Guid.NewGuid().ToString() + fileExtension;
+
+            try
+            {
+                StorageReference storageReference = storage.GetReference(path);
+                UploadTask uploadTask = storageReference.PutStream(fileData.GetStream());
+                uploadTask.AddOnCompleteListener(new OnCompleteEventHandleListener((Android.Gms.Tasks.Task uploadFile) =>
+                {
+                    if (uploadFile.IsSuccessful)
+                    {
+                        var TaskResult = uploadFile.Result;
+                        var uri = ((UploadTask.TaskSnapshot)TaskResult).DownloadUrl.ToString();
+                        
+                        ResultCompletionSource.SetResult(uri);
+                    }
+                }));
+            }
+            catch (Exception e)
+            {
+                ResultCompletionSource.TrySetException(e);
             }
             return ResultCompletionSource.Task;
         }
@@ -63,6 +89,18 @@ namespace Pal.Droid.Service
             else 
                 return ".pdf";
         }
+
+        private string GetMomentExtension(string FileName)
+        {
+            if (FileName.EndsWith("jpg", StringComparison.OrdinalIgnoreCase))
+                return ".jpg";
+            else if (FileName.EndsWith("png", StringComparison.OrdinalIgnoreCase))
+                return ".png";
+            else
+                return ".mp4";
+        }
+
+
 
     }
 }

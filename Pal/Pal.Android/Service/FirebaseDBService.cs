@@ -22,12 +22,13 @@ namespace Pal.Droid.Service
         private const string friendsListCollection = "friendsList";
         private const string pinBoardCollection = "pinBoard";
         private const string pollCollection = "poll";
+        private string CurrentUserEmail = UserSetting.UserEmail;
 
         private FirebaseFirestore Conn = FirebaseFirestore.GetInstance(MainActivity.app);
         private IListenerRegistration ReatimeListener = null;
-        ObservableCollection<Message> messages = new ObservableCollection<Message>();
-        ObservableCollection<object> Rooms = new ObservableCollection<object>();
-        ObservableCollection<Board> board = new ObservableCollection<Board>();
+        private ObservableCollection<Message> messages = new ObservableCollection<Message>();
+        private ObservableCollection<object> Rooms = new ObservableCollection<object>();
+        private ObservableCollection<Board> board = new ObservableCollection<Board>();
 
 
         //Create
@@ -37,7 +38,7 @@ namespace Pal.Droid.Service
             Android.Runtime.JavaDictionary<string, Java.Lang.Object> chatRoomUser = new Android.Runtime.JavaDictionary<string, Java.Lang.Object>
             {
                 { user.Email.Replace(".", ":"), true },
-                { UserSetting.UserEmail.Replace(".", ":"), true }
+                { CurrentUserEmail.Replace(".", ":"), true }
             };
 
             var chatRoom = new Dictionary<string, Java.Lang.Object>
@@ -68,7 +69,7 @@ namespace Pal.Droid.Service
             TaskCompletionSource<GroupChatRoom> ResultCompletionSource = new TaskCompletionSource<GroupChatRoom>();
             var members = new Android.Runtime.JavaDictionary<string, Java.Lang.Object>();
 
-            members.Add(UserSetting.UserEmail.ToLower().Replace(".", ":"), true);
+            members.Add(CurrentUserEmail.ToLower().Replace(".", ":"), true);
             foreach (User user in groupChat._Users)
             {
                 members.Add(user.Email.ToLower().Replace(".", ":"), true);
@@ -77,7 +78,7 @@ namespace Pal.Droid.Service
             var GroupChatRoom = new Dictionary<string, Java.Lang.Object> {
                 { "image", null },
                 { "roomTitle", groupChat.RoomTilte },
-                {"admin",UserSetting.UserEmail.ToLower() },
+                {"admin",CurrentUserEmail.ToLower() },
                 { "users", members },
                 { "isGroup", true },
                 { "isDestruct",false}
@@ -87,7 +88,7 @@ namespace Pal.Droid.Service
                 if (task.IsSuccessful)
                 {
                     DocumentReference documentReference = (DocumentReference)task.Result;
-                    GroupChatRoom temp = new GroupChatRoom(documentReference.Id, groupChat.RoomTilte, UserSetting.UserEmail.ToLower(), groupChat._Users, false);
+                    GroupChatRoom temp = new GroupChatRoom(documentReference.Id, groupChat.RoomTilte, CurrentUserEmail.ToLower(), groupChat._Users, false);
                     ResultCompletionSource.SetResult(temp);
                 }
                 else { ResultCompletionSource.SetResult(null); }
@@ -104,7 +105,7 @@ namespace Pal.Droid.Service
                             { "email",user.Email.ToLower()},
                             { "username", user.UserName}
                         };
-            Conn.Collection("friendsList").Document(UserSetting.UserEmail).Collection("friend").Document(user.Email).Set(NewUser);
+            Conn.Collection("friendsList").Document(CurrentUserEmail).Collection("friend").Document(user.Email).Set(NewUser);
         }
         public Task<bool> AddPinBoardMessage(string roomID, Board boardMessage)
         {
@@ -168,7 +169,7 @@ namespace Pal.Droid.Service
         //Upadate
         public Task<bool> DestructMessage(String MessagesId) {
             TaskCompletionSource<bool> ResultCompletionSource = new TaskCompletionSource<bool>();
-                    Conn.Collection("messages").Document(MessagesId).Update("UserRead." + UserSetting.UserEmail.Replace(".", ":"), true)
+                    Conn.Collection("messages").Document(MessagesId).Update("UserRead." + CurrentUserEmail.Replace(".", ":"), true)
                         .AddOnSuccessListener(new OnSuccessListener((Java.Lang.Object obj) => {
                             ResultCompletionSource.SetResult(true);
                         })).AddOnFailureListener(new OnFailureListener((Java.Lang.Exception e)=> {
@@ -232,7 +233,7 @@ namespace Pal.Droid.Service
                 }
             }
 
-            ReadMessage.Add(UserSetting.UserEmail.Replace(".", ":"), false);
+            ReadMessage.Add(CurrentUserEmail.Replace(".", ":"), false);
 
             Conn.Collection("messages").Document(message.MessageId).Update("UserRead", ReadMessage);
         }
@@ -259,6 +260,23 @@ namespace Pal.Droid.Service
             }));
             return ResultCompletionSource.Task;
         }
+        public Task<bool> UpdatePollCloseStatus(string PollId) {
+            TaskCompletionSource<bool> ResultCompletionSource = new TaskCompletionSource<bool>();
+            var Path = Conn.Collection(pollCollection).Document(PollId);
+            Path.Update("isClose", true).AddOnCompleteListener(new OnCompleteEventHandleListener((Android.Gms.Tasks.Task obj) => {
+                if (obj.IsSuccessful)
+                {
+
+                    ResultCompletionSource.SetResult(true);
+                }
+                else {
+                    ResultCompletionSource.SetResult(false);
+                }
+                
+            }));
+            return ResultCompletionSource.Task;
+        }
+
 
         //Retrieve
         public Task<IndividualChatRoom> SearchIndividualChatRoom(string userEmail) {
@@ -267,7 +285,7 @@ namespace Pal.Droid.Service
             IndividualChatRoom individualChat = null;
             Query query = Conn.Collection("roomList")
                 .WhereEqualTo("users." + userEmail.Replace(".",":"), true)
-                .WhereEqualTo("users." + UserSetting.UserEmail.Replace(".",":"), true)
+                .WhereEqualTo("users." + CurrentUserEmail.Replace(".",":"), true)
                 .WhereEqualTo("isGroup",false);
 
             query.Get().AddOnCompleteListener(new OnCompleteEventHandleListener(async (Android.Gms.Tasks.Task obj) =>
@@ -288,7 +306,7 @@ namespace Pal.Droid.Service
 
                                 foreach (string useremail in tempUser.Keys)
                                 {
-                                    if (string.Compare(useremail, UserSetting.UserEmail.Replace(".", ":")) != 0)
+                                    if (string.Compare(useremail, CurrentUserEmail.Replace(".", ":")) != 0)
                                     {
                                         user.Email = useremail;
                                     }
@@ -326,7 +344,7 @@ namespace Pal.Droid.Service
                                 var tempMessage = InitialMessage(documentChange.Document.Id, temp);
                                 messages.Add(tempMessage);
 
-                                if (tempMessage.IsRead != null && !tempMessage.IsRead.ContainsKey(UserSetting.UserEmail.Replace(".", ":")))
+                                if (tempMessage.IsRead != null && !tempMessage.IsRead.ContainsKey(CurrentUserEmail.Replace(".", ":")))
                                     SetRead(tempMessage);
 
                             }
@@ -343,8 +361,8 @@ namespace Pal.Droid.Service
                         {
                             if (tempMessage.IsRead != null)
                             {
-                                var tempStatus = tempMessage.IsRead.ContainsKey(UserSetting.UserEmail.Replace(".", ":"));
-                                if (tempStatus&&tempMessage.IsRead[UserSetting.UserEmail.Replace(".",":")])
+                                var tempStatus = tempMessage.IsRead.ContainsKey(CurrentUserEmail.Replace(".", ":"));
+                                if (tempStatus&&tempMessage.IsRead[CurrentUserEmail.Replace(".",":")])
                                 {
                                     var indexOf = messages.IndexOf(tempMessage);
                                     messages[indexOf].Text = "--This message was destructed--";
@@ -420,7 +438,7 @@ namespace Pal.Droid.Service
         {
             TaskCompletionSource<List<User>> ResultCompletionSource = new TaskCompletionSource<List<User>>();
             List<User> FriendsList = new List<User>();
-            Conn.Collection(friendsListCollection).Document(UserSetting.UserEmail).Collection("friend").Get().AddOnCompleteListener(new OnCompleteEventHandleListener((Android.Gms.Tasks.Task
+            Conn.Collection(friendsListCollection).Document(CurrentUserEmail).Collection("friend").Get().AddOnCompleteListener(new OnCompleteEventHandleListener((Android.Gms.Tasks.Task
                  obj) =>
             {
                 if (obj.IsSuccessful == true)
@@ -510,7 +528,7 @@ namespace Pal.Droid.Service
         {
             TaskCompletionSource<ObservableCollection<object>> ResultCompletionSource = new TaskCompletionSource<ObservableCollection<object>>();
 
-            Query query = Conn.Collection("roomList").WhereEqualTo("users." + UserSetting.UserEmail.Replace(".", ":"), true);
+            Query query = Conn.Collection("roomList").WhereEqualTo("users." + CurrentUserEmail.Replace(".", ":"), true);
             ReatimeListener = query.AddSnapshotListener(new EventListener(async (Java.Lang.Object obj, FirebaseFirestoreException e) =>
             {
                 if (e != null)
@@ -557,7 +575,7 @@ namespace Pal.Droid.Service
                                     {
                                         foreach (string key in users.Keys)
                                         {
-                                            if (!key.Replace(":", ".").Equals(UserSetting.UserEmail))
+                                            if (!key.Replace(":", ".").Equals(CurrentUserEmail))
                                             {
                                                 RecipientEmail = key.Replace(":", ".");
                                             }
@@ -615,7 +633,7 @@ namespace Pal.Droid.Service
                         {
                             foreach (string key in users.Keys)
                             {
-                                if (!key.Replace(":", ".").Equals(UserSetting.UserEmail))
+                                if (!key.Replace(":", ".").Equals(CurrentUserEmail))
                                 {
                                     RecipientEmail = key.Replace(":", ".");
                                 }
@@ -636,7 +654,7 @@ namespace Pal.Droid.Service
 
             TaskCompletionSource<Poll> ResultCompletionSource = new TaskCompletionSource<Poll>();
             var Path = Conn.Collection(pollCollection);
-            Path.OrderBy("dateTime", Query.Direction.Descending).Limit(1).AddSnapshotListener(new EventListener((Java.Lang.Object obj, FirebaseFirestoreException e) =>
+            Path.WhereEqualTo("roomID",roomId).OrderBy("dateTime", Query.Direction.Descending).Limit(1).AddSnapshotListener(new EventListener((Java.Lang.Object obj, FirebaseFirestoreException e) =>
              {
                  if (e != null)
                  {
@@ -712,7 +730,7 @@ namespace Pal.Droid.Service
         public Task<bool> RemoveFriend(string FriendEmail)
         {
             TaskCompletionSource<bool> ResultCompletionSource = new TaskCompletionSource<bool>();
-            var Path = Conn.Collection(friendsListCollection).Document(UserSetting.UserEmail).Collection("friend").Document(FriendEmail);
+            var Path = Conn.Collection(friendsListCollection).Document(CurrentUserEmail).Collection("friend").Document(FriendEmail);
             Path.Delete().AddOnCompleteListener(new OnCompleteEventHandleListener((Android.Gms.Tasks.Task obj) =>
             {
                 if (obj.IsSuccessful)

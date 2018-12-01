@@ -108,7 +108,7 @@ namespace Pal.ViewModel
 
         }
 
-        public void OnPropertyChanged(String Property)
+        protected virtual void OnPropertyChanged(String Property)
         {
             PropertyChanged(this, new PropertyChangedEventArgs(Property));
         }

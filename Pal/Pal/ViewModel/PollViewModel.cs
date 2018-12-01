@@ -36,6 +36,9 @@ namespace Pal.ViewModel
         public ObservableCollection<SelectableData<string>> Option { get; set; } = new ObservableCollection<SelectableData<string>>();
         private GroupChatRoom groupChatRoom = new GroupChatRoom();
         public bool IsAdmin { get; set; } = false;
+        public bool IsClosed { get; set; } = false;
+        public bool IsEnablePoll { get; set; } = true;
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
         public PollViewModel(GroupChatRoom groupChatRoom) {
@@ -46,6 +49,7 @@ namespace Pal.ViewModel
             }
 
             OnCreatePollCommand = new Command(async() => {
+                Option  = new ObservableCollection<SelectableData<string>>();
                 if (!_Poll.IsClose)
                 {
                     await App.Current.MainPage.DisplayAlert("Something wrong....", "Please close this poll first. ", "Ok");
@@ -132,13 +136,25 @@ namespace Pal.ViewModel
                     await App.Current.MainPage.DisplayAlert("Something wrong....","This Poll already closed","Ok");
                     return;
                 }
-                
-                //await DependencyService.Get<IFirebaseDatabase>().
 
+                var status = await DependencyService.Get<IFirebaseDatabase>().UpdatePollCloseStatus(_Poll.PollId);
+                if (status)
+                {
+                    await App.Current.MainPage.DisplayAlert("Done", "The poll had been closed.", "Ok");
+                    _Poll.IsClose = true;
+                    IsClosed = true;
+                    IsEnablePoll = false;
+                    OnPropertyChanged("IsEnablePoll");
+                    OnPropertyChanged("IsClosed");
+
+                }
+                else {
+                    await App.Current.MainPage.DisplayAlert("Something wrong....", "Poll unable to close, Please try again.", "Ok");
+                }
             });
         }
 
-        public async Task<bool> InitialPoll() {
+        public async Task InitialPoll() {
 
             bool IsVoted = false;
             var TempPoll = await DependencyService.Get<IFirebaseDatabase>().GetLastestPoll(groupChatRoom.RoomID);
@@ -162,7 +178,16 @@ namespace Pal.ViewModel
                     Option.Add(new SelectableData<string>(TempStr, false));
                 }
             }
-            return IsVoted;
+
+            if (_Poll.IsClose)
+            {
+                await App.Current.MainPage.DisplayAlert("Closed", "This poll had been closed", "Ok");
+                IsEnablePoll = false;
+                IsClosed = true;
+                OnPropertyChanged("IsEnablePoll");
+                OnPropertyChanged("IsClosed");
+            }
+
         }
 
         public async Task UpadateVoteResult() {
@@ -184,6 +209,8 @@ namespace Pal.ViewModel
             if (Check)
             {
                 await App.Current.MainPage.DisplayAlert("Done", "Thank for your vote.", "Ok");
+                IsEnablePoll = false;
+                OnPropertyChanged("IsEnablePoll");
             }
             else {
                 await App.Current.MainPage.DisplayAlert("Something wrong....", "Vote unsuccessful.Please try again.","Ok");

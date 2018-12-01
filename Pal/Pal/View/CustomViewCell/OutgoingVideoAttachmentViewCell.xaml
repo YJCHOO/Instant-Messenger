@@ -3,9 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Pal.View.CustomViewCell.OutgoingVideoAttachmentViewCell">
 
-    <ViewCell.ContextActions>
-        <MenuItem Text="Pin"/>
-    </ViewCell.ContextActions>
+
     <Frame BackgroundColor="Gray"
            Padding="10"
            HasShadow="False"

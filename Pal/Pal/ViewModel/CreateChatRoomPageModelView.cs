@@ -71,6 +71,7 @@ namespace Pal.ViewModel
 
                 GroupChatRoom groupChatRoom = new GroupChatRoom("", RoomTitle, UserSetting.UserEmail, InvitedFriends, false);
                 var NewGroupChat= await DependencyService.Get<IFirebaseDatabase>().AddGroupChatRoom(groupChatRoom);
+                await App.Current.MainPage.Navigation.PopToRootAsync();
                 await App.Current.MainPage.Navigation.PushAsync(new GroupChatContents(NewGroupChat));
             }
         }

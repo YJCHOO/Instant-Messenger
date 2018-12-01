@@ -2393,26 +2393,26 @@ namespace Pal.Droid
 			// aapt resource value: 0x7f020053
 			public const int avd_hide_password = 2130837587;
 			
-			// aapt resource value: 0x7f020153
-			public const int avd_hide_password_1 = 2130837843;
-			
 			// aapt resource value: 0x7f020154
-			public const int avd_hide_password_2 = 2130837844;
+			public const int avd_hide_password_1 = 2130837844;
 			
 			// aapt resource value: 0x7f020155
-			public const int avd_hide_password_3 = 2130837845;
+			public const int avd_hide_password_2 = 2130837845;
+			
+			// aapt resource value: 0x7f020156
+			public const int avd_hide_password_3 = 2130837846;
 			
 			// aapt resource value: 0x7f020054
 			public const int avd_show_password = 2130837588;
 			
-			// aapt resource value: 0x7f020156
-			public const int avd_show_password_1 = 2130837846;
-			
 			// aapt resource value: 0x7f020157
-			public const int avd_show_password_2 = 2130837847;
+			public const int avd_show_password_1 = 2130837847;
 			
 			// aapt resource value: 0x7f020158
-			public const int avd_show_password_3 = 2130837848;
+			public const int avd_show_password_2 = 2130837848;
+			
+			// aapt resource value: 0x7f020159
+			public const int avd_show_password_3 = 2130837849;
 			
 			// aapt resource value: 0x7f020055
 			public const int baseline_cancel_white_24dp = 2130837589;
@@ -3119,11 +3119,11 @@ namespace Pal.Droid
 			// aapt resource value: 0x7f02013f
 			public const int notification_icon_background = 2130837823;
 			
-			// aapt resource value: 0x7f020151
-			public const int notification_template_icon_bg = 2130837841;
-			
 			// aapt resource value: 0x7f020152
-			public const int notification_template_icon_low_bg = 2130837842;
+			public const int notification_template_icon_bg = 2130837842;
+			
+			// aapt resource value: 0x7f020153
+			public const int notification_template_icon_low_bg = 2130837843;
 			
 			// aapt resource value: 0x7f020140
 			public const int notification_tile_bg = 2130837824;
@@ -3162,19 +3162,22 @@ namespace Pal.Droid
 			public const int round_person_add_disabled_white_24dp = 2130837835;
 			
 			// aapt resource value: 0x7f02014c
-			public const int round_send_white_24dp = 2130837836;
+			public const int round_photo_camera_white_36dp = 2130837836;
 			
 			// aapt resource value: 0x7f02014d
-			public const int round_turned_in_white_36dp = 2130837837;
+			public const int round_send_white_24dp = 2130837837;
 			
 			// aapt resource value: 0x7f02014e
-			public const int sharp_add_white_24dp = 2130837838;
+			public const int round_turned_in_white_36dp = 2130837838;
 			
 			// aapt resource value: 0x7f02014f
-			public const int tooltip_frame_dark = 2130837839;
+			public const int sharp_add_white_24dp = 2130837839;
 			
 			// aapt resource value: 0x7f020150
-			public const int tooltip_frame_light = 2130837840;
+			public const int tooltip_frame_dark = 2130837840;
+			
+			// aapt resource value: 0x7f020151
+			public const int tooltip_frame_light = 2130837841;
 			
 			static Drawable()
 			{

@@ -96,6 +96,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CameraViewRenderer.cs" />
     <Compile Include="EventListeners\EventListener.cs" />
     <Compile Include="EventListeners\OnCompleteEventHandleListener.cs" />
     <Compile Include="EventListeners\OnFailureListener.cs" />
@@ -190,6 +191,9 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\round_person_add_disabled_white_24dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\round_photo_camera_white_36dp.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

@@ -12,7 +12,7 @@ namespace Pal.Model
         public string Thumbnail{ get; set; }
         public string AttachmentUri { get; set; }
         public FileData _FileData { get; set; }
-
+        
 
         public Attachment() { }
 

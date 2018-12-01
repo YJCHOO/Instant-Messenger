@@ -40,5 +40,6 @@ namespace Pal.Service
         Task<Poll> GetLastestPoll(string roomId);
         Task<bool> UpdateResult(Poll poll);
         void ClearAllPinBoardMessage();
+        Task<bool> UpdatePollCloseStatus(string PollId);
     }
 }

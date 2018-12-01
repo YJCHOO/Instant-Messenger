@@ -28,7 +28,6 @@ namespace Pal.View
 
         private async void Switch_Toggled(object sender, ToggledEventArgs e)
         {
-            OptionsList.IsEnabled = false;
             await VM.UpadateVoteResult();
         }
     }

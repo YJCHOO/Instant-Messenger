@@ -21,6 +21,8 @@ namespace Pal.ViewModel
                               OutgoingVideoAttachmentViewCell, 
                               OutgoingDocAttachmentViewCell;
 
+        private string CurrentUserEmail = UserSetting.UserEmail;
+
         public ChatTemplateSelector()
         {
             //Incoming
@@ -44,7 +46,7 @@ namespace Pal.ViewModel
             if (messageVm == null)
                 return null;
 
-            if (string.Compare(messageVm.SenderEmail, UserSetting.UserEmail) == 0) 
+            if (string.Compare(messageVm.SenderEmail, CurrentUserEmail) == 0) 
             {
                 //outgoing 
                 if (string.IsNullOrEmpty(messageVm.AttachmentUri))

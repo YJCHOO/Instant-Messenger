@@ -160,7 +160,8 @@ namespace Pal.ViewModel
 
 
         private async Task<Attachment> UploadFile(FileData FileStream) {
-               var url =  await DependencyService.Get<IFirebaseStorage>().UploadFile(FileStream);
+            Attachment url =  await DependencyService.Get<IFirebaseStorage>().UploadFile(FileStream);
+            
             return url;
         }
 
