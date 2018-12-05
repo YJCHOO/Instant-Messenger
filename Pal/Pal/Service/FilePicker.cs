@@ -77,5 +77,17 @@ namespace Pal.Service
                 Type = "PDF";
             return Type;
         }
+
+        public string IsSupportedMomentType(string FileType) {
+
+            string Type = null;
+            if (FileType.EndsWith("jpg", StringComparison.OrdinalIgnoreCase) ||
+                   FileType.EndsWith("png", StringComparison.OrdinalIgnoreCase))
+                Type = "Img";
+            else if (FileType.EndsWith("mp4", StringComparison.OrdinalIgnoreCase))
+                Type = "Video";
+
+            return Type;
+        }
     }
 }

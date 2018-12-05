@@ -1,16 +1,10 @@
 ﻿using Pal.Model;
 using Pal.Service;
 using Plugin.Connectivity;
-using Plugin.FilePicker;
 using Plugin.FilePicker.Abstractions;
-using Plugin.Permissions;
-using Plugin.Permissions.Abstractions;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
@@ -58,7 +52,7 @@ namespace Pal.ViewModel
 
                     Message message = new Message(UserSetting.UserEmail, UserSetting.UserName, this.TextToSend, attachmentType.AttachmentUri,attachmentType.FileName);
                     
-                    DependencyService.Get<IFirebaseDatabase>().SetMessage(ChatRoom, message);
+                    await DependencyService.Get<IFirebaseDatabase>().SetMessage(ChatRoom, message);
 
                     TextToSend = string.Empty;
                     AttachmentSection = false;

@@ -23,7 +23,7 @@
     <PackageReference Include="Xam.Plugin.Media" Version="4.0.1.5" />
     <PackageReference Include="Xam.Plugins.Settings" Version="3.1.1" />
     <PackageReference Include="Xamarin.Forms" Version="3.3.0.967583" />
-    <PackageReference Include="Xamarin.Plugin.FilePicker" Version="2.0.121" />
+    <PackageReference Include="Xamarin.Plugin.FilePicker" Version="2.0.135" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,6 +41,9 @@
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="View\AddMoments.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="View\AddPinBoardMessage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
@@ -91,6 +94,9 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="View\FriendListPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="View\MomentSendTo.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="View\MomentsView.xaml">

@@ -21,6 +21,7 @@ namespace Pal.ViewModel
         public ICommand OnLoginCommand { get; set; }
         public ICommand OnRegisterCommand { get; set; }
         private readonly Validator validator = new Validator();
+        public bool IsLoading { get; set; } = false;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -36,13 +37,18 @@ namespace Pal.ViewModel
 
                 try
                 {
+                    OnLoading();
                     UserSetting.UserEmail = await DependencyService.Get<IFirebaseAuthenticator>().LoginWithEmailPass(EmailText, PassText);
                     UserSetting.UserName = await DependencyService.Get<IFirebaseDatabase>().GetUsername(EmailText);
                     await App.Current.MainPage.Navigation.PushAsync(new UsernameSetupPage());
 
                 }
-                catch (Exception Ex) {
+                catch (Exception Ex)
+                {
                     FirebaseException(Ex.ToString());
+                }
+                finally {
+                    OffLoading();
                 }
             });
 
@@ -56,12 +62,17 @@ namespace Pal.ViewModel
 
                 try
                 {
+                    OnLoading();
                     UserSetting.UserEmail = await DependencyService.Get<IFirebaseAuthenticator>().RegisterWithEmailPassword(EmailText, PassText);
                     DependencyService.Get<IFirebaseDatabase>().SetUser(EmailText, "");
                     await App.Current.MainPage.Navigation.PushAsync(new UsernameSetupPage());
                 }
                 catch (Exception Ex) {
                     FirebaseException(Ex.ToString());
+                }
+                finally
+                {
+                    OffLoading();
                 }
             });
 
@@ -81,15 +92,20 @@ namespace Pal.ViewModel
 
                 try
                 {
-                    DependencyService.Get<IFirebaseDatabase>().UpdateUser(UserSetting.UserEmail, Username);
+                    OnLoading();
+                    await DependencyService.Get<IFirebaseDatabase>().UpdateUser(UserSetting.UserEmail, Username);
                     UserSetting.UserName = Username;
-
-                    App.Current.MainPage = new NavigationPage(new ChatsPage());
+                    App.Current.MainPage = new NavigationPage(new MainPage());
                 }
                 catch (Exception Ex)
                 {
                     Debug.Write(Ex.Message);
 
+                }
+                finally
+                {
+
+                    OffLoading();
                 }
             });
 
@@ -141,9 +157,20 @@ namespace Pal.ViewModel
             await App.Current.MainPage.DisplayAlert("Something happen....", AlertMsg, "Ok");
         }
         
+        private void OnLoading()
+        {
+            IsLoading = true;
+            OnPropertyChanged("IsLoading");
+        }
+
+        private void OffLoading()
+        {
+            IsLoading = false;
+            OnPropertyChanged("IsLoading");
+        }
         
 
-        public void OnPropertyChanged(String Property)
+        protected virtual void OnPropertyChanged(String Property)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(Property));
         }

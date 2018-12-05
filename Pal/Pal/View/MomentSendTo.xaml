@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Pal.View.MomentSendTo"
+             Title="Send to:">
+    
+    
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="Please try to add some friends first." IsVisible="{Binding IsFriendsListEmpty}"/>
+            <ListView x:Name="FriendsListView" IsVisible="{Binding}"  Header="Touch the switch to select." RowHeight="60" ItemsSource="{Binding SendTo}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout Orientation="Horizontal" HorizontalOptions="StartAndExpand">
+                                <Image Source="blank_profile_picture_640.png" HeightRequest="60" WidthRequest="60" HorizontalOptions="Start"/>
+                                <StackLayout Orientation="Vertical" HorizontalOptions="CenterAndExpand" HeightRequest="60">
+                                    <Label Text="{Binding Data.UserName}" FontSize="Small" />
+                                    <Label Text="{Binding Data.Email}" FontSize="Small"/>
+                                </StackLayout>
+                                <Switch IsToggled="{Binding Selected}" HorizontalOptions="EndAndExpand"/>
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

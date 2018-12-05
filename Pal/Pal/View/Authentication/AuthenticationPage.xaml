@@ -5,6 +5,10 @@
 
     <ContentPage.Content>
         <StackLayout>
+            <StackLayout IsVisible="{Binding IsLoading}">
+            <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" HorizontalOptions="CenterAndExpand"/>
+           <Label Text="Processing"  IsVisible="{Binding IsLoading}" HorizontalOptions="CenterAndExpand"/>
+            </StackLayout>
             <Label Text="Welcome to Pal!"
                 HorizontalOptions="CenterAndExpand" />
 

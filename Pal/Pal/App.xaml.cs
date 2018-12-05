@@ -21,16 +21,18 @@ namespace Pal
         {
             InitializeComponent();
 
-            MainPage = new NavigationPage(new MainPage());
 
-            //if (UserSetting.IsUserEmail && UserSetting.IsUserName)
-            //{
 
-            //    MainPage = new NavigationPage(new ChatsPage());
-            //}
-            //else {
-            //    MainPage = new NavigationPage(new AuthenticationPage());
-            //}
+            if (UserSetting.IsUserEmail && UserSetting.IsUserName)
+            {
+
+                MainPage = new NavigationPage(new MainPage());
+
+            }
+            else
+            {
+                MainPage = new NavigationPage(new AuthenticationPage());
+            }
         }
 
         protected override void OnStart()

@@ -92,15 +92,16 @@
       <Version>60.1142.1</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Plugin.FilePicker">
-      <Version>2.0.121</Version>
+      <Version>2.0.135</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CameraViewRenderer.cs" />
     <Compile Include="EventListeners\EventListener.cs" />
     <Compile Include="EventListeners\OnCompleteEventHandleListener.cs" />
     <Compile Include="EventListeners\OnFailureListener.cs" />
     <Compile Include="EventListeners\OnSuccessListener.cs" />
+    <Compile Include="Listener\CameraCaptureSessionCallback .cs" />
+    <Compile Include="Listener\CameraStateListener.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -194,6 +195,29 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\round_photo_camera_white_36dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\CameraPreviewLayout.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\FlashButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\NoFlashButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\TakePhotoButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\ToggleCameraButton.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\round_flash_off_white_48dp.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\round_flash_on_white_48dp.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

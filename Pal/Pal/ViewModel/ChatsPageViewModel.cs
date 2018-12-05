@@ -19,6 +19,7 @@ namespace Pal.ViewModel
         public ICommand OnAddChatCommand { get; set; }
         public ICommand OnFriendsListCommand { get; set; }
         public ICommand OnLogoutCommand { get; set; }
+        public bool ListIsEmpty { get; set; } = false;
         public event PropertyChangedEventHandler PropertyChanged;
 
         public ChatsPageViewModel() {
@@ -35,13 +36,22 @@ namespace Pal.ViewModel
             });
         }
 
-
-        public void OnPropertyChanged(String Property)
+        protected virtual void OnPropertyChanged(String Property)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(Property));
         }
+
         public async Task InitialRoom() {
             ChatRooms = await DependencyService.Get<IFirebaseDatabase>().GetAllRoom();
+            if (ChatRooms == null)
+            {
+                ListIsEmpty = true;
+            }
+            else
+            {
+                ListIsEmpty = false;
+            }
+            OnPropertyChanged("ListIsEmpty");
             OnPropertyChanged("ChatRooms");
         }
 

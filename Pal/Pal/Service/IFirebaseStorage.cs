@@ -8,6 +8,6 @@ namespace Pal.Service
     public interface IFirebaseStorage
     {
         Task<Attachment> UploadFile(FileData fileData);
-
+        Task<string> UploadMoments(FileData fileData);
     }
 }

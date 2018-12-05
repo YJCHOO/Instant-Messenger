@@ -11,11 +11,10 @@ using Xamarin.Forms.Xaml;
 namespace Pal.View
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
-	public partial class SocialPage : ContentPage
+	public partial class AddMoments : ContentPage
 	{
         SocialViewModel VM;
-
-		public SocialPage ()
+		public AddMoments ()
 		{
 			InitializeComponent ();
             VM = new SocialViewModel();

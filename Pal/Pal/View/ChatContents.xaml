@@ -19,6 +19,7 @@
         <StackLayout>
             <!--ChatContents-->
             <ListView 
+                x:Name="MessagesList"
                  ItemTemplate="{StaticResource MessageTemplateSelector}" 
                  ItemsSource="{Binding Messages}" 
                  Margin="0" 
@@ -43,7 +44,7 @@
                    HeightRequest="60"
                    WidthRequest="60"/>
                 <Label 
-                   Text="{Binding Attachment.FileName}"/>
+                   Text="{Binding Attachment.FileName,StringFormat='File name: {0:N}'}"/>
                 <Button Text="Remove" Clicked="BtnCancel_Clicked"/>
             </StackLayout>
 

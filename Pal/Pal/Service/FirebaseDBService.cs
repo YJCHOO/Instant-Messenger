@@ -9,12 +9,12 @@ namespace Pal.Service
     public interface IFirebaseDatabase
     {
         Task<string> GetUsername(string email);
-        void SetUser(string email, string name);
-        void UpdateUser(string email, string username);
+        Task<bool> SetUser(string email, string name);
+        Task<bool> UpdateUser(string email, string username);
 
-        void SetMessage(ChatRoom chatRoom,Message message);
+        Task<bool> SetMessage(ChatRoom chatRoom,Message message);
         Task<ObservableCollection<Message>> GetMessage(string roomId);
-        void SetRead(Message message);
+        Task<bool> SetRead(Message message);
     
         Task<IndividualChatRoom> AddIndividualChatRoom(User user);
         Task<GroupChatRoom> AddGroupChatRoom(GroupChatRoom groupChat);
@@ -41,5 +41,7 @@ namespace Pal.Service
         Task<bool> UpdateResult(Poll poll);
         void ClearAllPinBoardMessage();
         Task<bool> UpdatePollCloseStatus(string PollId);
+
+        Task<bool> CreateMoment(Moment moment);
     }
 }

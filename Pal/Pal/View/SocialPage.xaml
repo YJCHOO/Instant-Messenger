@@ -3,12 +3,37 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Pal.View.SocialPage">
     <ContentPage.ToolbarItems>
-        <ToolbarItem Icon="round_photo_camera_white_36dp.png" Text="Camera" Command="{Binding }" />
+        <ToolbarItem Text="Add" Command="{Binding OnAddMoments}"/>
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
         <StackLayout>
 
+        <!--<ListView HasUnevenRows="True" 
+        VerticalOptions="FillAndExpand" 
+        SeparatorColor="Gray"
+        SelectionMode="None">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                        <ViewCell>
+                            <StackLayout Orientation="Vertical">
+                                <StackLayout Orientation="Horizontal">
+                                    <Image Source="{Binding}" HeightRequest="60" WidthRequest="60" HorizontalOptions="Start"/>
+                                    --><!--userImg--><!--
+                                    <Label Text="{Binding}"/>
+                                    --><!--Username--><!--
+                                </StackLayout>
+
+                                <StackLayout Orientation="Vertical" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                                    <Image Source="{Binding}" IsVisible="{Binding}"/>
+                                    <Label Text="{Binding}"/>
+                                </StackLayout>
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>-->
+            
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
