@@ -2,7 +2,6 @@
 using Pal.Service;
 using Firebase.Firestore;
 using System.Collections.Generic;
-using Android.Gms.Tasks;
 using System.Diagnostics;
 using Pal.Model;
 using Pal.Droid.EventListeners;
@@ -10,7 +9,7 @@ using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System;
 using System.Globalization;
-using Plugin.FilePicker.Abstractions;
+
 
 [assembly: Dependency(typeof(Pal.Droid.Service.FirebaseDatabaseConn))]
 namespace Pal.Droid.Service
@@ -29,7 +28,7 @@ namespace Pal.Droid.Service
         private ObservableCollection<Message> messages = new ObservableCollection<Message>();
         private ObservableCollection<object> Rooms = new ObservableCollection<object>();
         private ObservableCollection<Board> board = new ObservableCollection<Board>();
-
+        private ObservableCollection<Moment> Moments = new ObservableCollection<Moment>();
 
         //Create
         public Task<IndividualChatRoom> AddIndividualChatRoom(User user)
@@ -176,10 +175,12 @@ namespace Pal.Droid.Service
             var _Moment = new Dictionary<string, Java.Lang.Object>
             {
                 {"sender",moment.Sender},
+                {"senderName", moment.SenderName},
                 {"receivers",receiver },
-                {"dateTime",moment.DateTime },
+                {"dateTime",new Java.Util.Date() },
                 {"description",moment.Description },
-                {"attachment",moment._Attachment.AttachmentUri },
+                {"attachment",moment._Attachment.AttachmentUri }
+
             };
 
             var Path = Conn.Collection(momentCollection).Add(_Moment);
@@ -782,6 +783,71 @@ namespace Pal.Droid.Service
 
             return ResultCompletionSource.Task;
         }
+        public Task<ObservableCollection<Moment>> GetMomentsList()
+        {
+            TaskCompletionSource<ObservableCollection<Moment>> ResultCompletionSource = new TaskCompletionSource<ObservableCollection<Moment>>();
+
+            Java.Util.Calendar cal = Java.Util.Calendar.Instance;
+            Java.Util.Date CurrentDateTime = cal.Time;
+            cal.Add(Java.Util.Calendar.Date, -1);
+            Java.Util.Date YesterdayDateTime = cal.Time;
+
+            Debug.Write(CurrentDateTime);
+            Debug.Write(YesterdayDateTime);
+
+            var Path = Conn.Collection(momentCollection)
+                .WhereEqualTo("receivers." + UserSetting.UserEmail.Replace(".", ":"), false)
+                .WhereGreaterThanOrEqualTo("dateTime", YesterdayDateTime)
+                .WhereLessThanOrEqualTo("dateTime", CurrentDateTime)
+                .OrderBy("dateTime");
+
+            ReatimeListener = Path.AddSnapshotListener(new EventListener((Java.Lang.Object obj, FirebaseFirestoreException e) => {
+                if (e != null) {
+                    Debug.Write(e.Message);
+                    ResultCompletionSource.TrySetResult(null);
+                    return;
+                }
+                else {
+                    QuerySnapshot querySnapshot = (QuerySnapshot)obj;
+                    if (!querySnapshot.IsEmpty)
+                    {
+                        foreach (DocumentChange documentChange in querySnapshot.DocumentChanges)
+                        {
+                            if (documentChange.GetType() == DocumentChange.Type.Added)
+                            {
+                                var temp = documentChange.Document.Data;
+                                var Id = documentChange.Document.Id;
+                                var Attachment = (string)temp["attachment"];
+                                var DateTime = (Java.Util.Date)temp["dateTime"];
+                                var Description = (string)temp["description"];
+                                var Sender = (string)temp["sender"];
+                                var SenderName = (string)temp["senderName"];
+                                string thumbnail = null;
+                                if (Attachment != null)
+                                {
+                                    if (Attachment.Contains("jpg", StringComparison.OrdinalIgnoreCase) || Attachment.Contains("png", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        thumbnail = Attachment;
+                                    }
+                                    else
+                                    {
+                                        thumbnail = "round_movie_black_48.png";
+                                    }
+                                }
+                                Attachment attachment = new Attachment();
+                                attachment.AttachmentUri = Attachment;
+                                attachment.Thumbnail = thumbnail;
+                                    Moments.Add(new Moment(Id, Sender, SenderName, JavaTimeToCSTime(DateTime), Description, attachment));
+                            }
+                        }
+                    }
+
+                    ResultCompletionSource.TrySetResult(Moments);
+                }
+                }));
+            return ResultCompletionSource.Task;
+        }
+
         //Remove
         public Task<bool> RemovePinBoardMessage(string PinBoardMessageId) {
             TaskCompletionSource<bool> ResultCompletionSource = new TaskCompletionSource<bool>();
@@ -890,6 +956,14 @@ namespace Pal.Droid.Service
                 ReatimeListener = null;
             }
             this.board = new ObservableCollection<Board>();
+        }
+        public void ClearAllMoments() {
+            if (ReatimeListener != null)
+            {
+                ReatimeListener.Remove();
+                ReatimeListener = null;
+            }
+            this.Moments = new ObservableCollection<Moment>();
         }
     }
 }

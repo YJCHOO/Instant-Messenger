@@ -43,5 +43,7 @@ namespace Pal.Service
         Task<bool> UpdatePollCloseStatus(string PollId);
 
         Task<bool> CreateMoment(Moment moment);
+        Task<ObservableCollection<Moment>> GetMomentsList();
+        void ClearAllMoments();
     }
 }

@@ -3,12 +3,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Pal.View.MomentSendTo"
              Title="Send to:">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Icon="round_send_white_36dp.png" Command="{Binding OnPostCommand}"/>
+    </ContentPage.ToolbarItems>
     
     
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Please try to add some friends first." IsVisible="{Binding IsFriendsListEmpty}"/>
-            <ListView x:Name="FriendsListView" IsVisible="{Binding}"  Header="Touch the switch to select." RowHeight="60" ItemsSource="{Binding SendTo}">
+
+            <StackLayout IsVisible="{Binding IsProcessing}" HorizontalOptions="CenterAndExpand">
+                <ActivityIndicator IsRunning="{Binding IsProcessing}" HorizontalOptions="CenterAndExpand" IsVisible="{Binding IsProcessing}"/>
+                <Label Text="Posting.Please wait." HorizontalOptions="CenterAndExpand"/>
+            </StackLayout>
+            
+            <Label Text="Please try to add some friends first." IsVisible="{Binding IsFriendsListEmpty}" HorizontalOptions="CenterAndExpand"/>
+            <ListView x:Name="FriendsListView" IsVisible="{Binding IsFriendsNotEmpty}"  Header="Touch the switch to select." RowHeight="60" ItemsSource="{Binding SendTo}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>

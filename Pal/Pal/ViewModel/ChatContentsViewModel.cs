@@ -113,13 +113,12 @@ namespace Pal.ViewModel
 
             FilePicker _FilePicker = FilePicker.GetInstance();
             string thumbnail = null;
-
+            string CheckType = null;
 
             if (!await _FilePicker.CheckPermission()) {
                 return false;
             }
-
-            string CheckType=null;
+            
             var pickedFile = await _FilePicker.PickAndShowFile();
             if (pickedFile == null){ return false; }
             else { 

@@ -64,7 +64,7 @@ namespace Pal.ViewModel
                 {
                     OnLoading();
                     UserSetting.UserEmail = await DependencyService.Get<IFirebaseAuthenticator>().RegisterWithEmailPassword(EmailText, PassText);
-                    DependencyService.Get<IFirebaseDatabase>().SetUser(EmailText, "");
+                    await DependencyService.Get<IFirebaseDatabase>().SetUser(EmailText, "");
                     await App.Current.MainPage.Navigation.PushAsync(new UsernameSetupPage());
                 }
                 catch (Exception Ex) {

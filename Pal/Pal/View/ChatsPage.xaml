@@ -10,7 +10,7 @@
     
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="No chat available." IsVisible="{Binding ListIsEmpty}"/>
+            <Label Text="No chat available." IsVisible="{Binding ListIsEmpty}" HorizontalOptions="CenterAndExpand"/>
             <ListView x:Name="ChatRoomList" ItemTapped="ChatList_ItemTapped" ItemsSource="{Binding ChatRooms}">
                 <ListView.ItemTemplate>
                     <DataTemplate>

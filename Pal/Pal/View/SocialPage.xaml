@@ -1,38 +1,50 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Pal.View.SocialPage">
+             x:Class="Pal.View.SocialPage"
+             x:Name="SocialViewModel">
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Add" Command="{Binding OnAddMoments}"/>
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
         <StackLayout>
-
-        <!--<ListView HasUnevenRows="True" 
+            <Label Text="No Moment received" IsVisible="{Binding IsMomentsListEmpty}"/>
+            <ListView x:Name="MomentsList"
+            HasUnevenRows="True" 
         VerticalOptions="FillAndExpand" 
         SeparatorColor="Gray"
-        SelectionMode="None">
+        SelectionMode="None"
+                  ItemsSource="{Binding Moments}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                         <ViewCell>
                             <StackLayout Orientation="Vertical">
                                 <StackLayout Orientation="Horizontal">
-                                    <Image Source="{Binding}" HeightRequest="60" WidthRequest="60" HorizontalOptions="Start"/>
-                                    --><!--userImg--><!--
-                                    <Label Text="{Binding}"/>
-                                    --><!--Username--><!--
+                                    <Image Source="blank_profile_picture_640.png" HeightRequest="60" WidthRequest="60" HorizontalOptions="Start"/>
+                                    <!--userImg-->
+                                    <Label Text="{Binding SenderName}"/>
+                                    <!--Username-->
                                 </StackLayout>
 
-                                <StackLayout Orientation="Vertical" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                                    <Image Source="{Binding}" IsVisible="{Binding}"/>
-                                    <Label Text="{Binding}"/>
+                                <StackLayout Orientation="Vertical" HorizontalOptions="StartAndExpand" VerticalOptions="CenterAndExpand">
+                                    <Label Text="{Binding Description}"/>
+                                    <Image Source="{Binding _Attachment.Thumbnail}">
+                                        <Image.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding BindingContext.OnClickAttachment,Source={x:Reference SocialViewModel}}" CommandParameter="{Binding _Attachment.AttachmentUri}"
+                                                NumberOfTapsRequired="2"/>
+                                        </Image.GestureRecognizers>
+                                    </Image>
+
+
+
                                 </StackLayout>
                             </StackLayout>
                         </ViewCell>
                     </DataTemplate>
                         </ListView.ItemTemplate>
-                    </ListView>-->
+                    </ListView>
             
         </StackLayout>
     </ContentPage.Content>

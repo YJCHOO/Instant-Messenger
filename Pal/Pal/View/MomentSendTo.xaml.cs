@@ -20,7 +20,7 @@ namespace Pal.View
         {
             base.OnAppearing();
             FriendsListView.BeginRefresh();
-            VM.InitializeUser();
+            VM.InitialUser();
             FriendsListView.EndRefresh();
         }
     }
