@@ -11,3 +11,4 @@ namespace Pal.Service
         Task<string> UploadMoments(FileData fileData);
     }
 }
+

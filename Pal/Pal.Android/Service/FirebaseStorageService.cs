@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Firebase.Storage;
 using Pal.Droid.EventListeners;
@@ -9,7 +8,6 @@ using Plugin.FilePicker.Abstractions;
 using Xamarin.Forms;
 
 [assembly: Dependency(typeof(Pal.Droid.Service.FirebaseStorageService))]
-
 namespace Pal.Droid.Service
 {
     public class FirebaseStorageService : IFirebaseStorage
@@ -21,7 +19,6 @@ namespace Pal.Droid.Service
             TaskCompletionSource<Attachment> ResultCompletionSource = new TaskCompletionSource<Attachment>();
             string fileExtension = GetExtension(fileData.FileName);
             string fileNameStr = fileData.FileName;
-
             string path = "userFile/"+Guid.NewGuid().ToString()+ fileExtension;
 
             try
@@ -30,7 +27,6 @@ namespace Pal.Droid.Service
                 StorageMetadata storageMetadata = new StorageMetadata.Builder()
                     .SetCustomMetadata("FileName", fileNameStr)
                     .Build();
-
                 UploadTask uploadTask= storageReference.PutStream(fileData.GetStream(), storageMetadata);
                 uploadTask.AddOnCompleteListener(new OnCompleteEventHandleListener((Android.Gms.Tasks.Task uploadFile) =>
                 {
@@ -53,7 +49,6 @@ namespace Pal.Droid.Service
             TaskCompletionSource<string> ResultCompletionSource = new TaskCompletionSource<string>();
             string fileExtension = GetMomentExtension(fileData.FileName);
             string fileNameStr = fileData.FileName;
-
             string path = "moments/" + Guid.NewGuid().ToString() + fileExtension;
 
             try
@@ -66,7 +61,6 @@ namespace Pal.Droid.Service
                     {
                         var TaskResult = uploadFile.Result;
                         var uri = ((UploadTask.TaskSnapshot)TaskResult).DownloadUrl.ToString();
-                        
                         ResultCompletionSource.SetResult(uri);
                     }
                 }));
@@ -99,8 +93,5 @@ namespace Pal.Droid.Service
             else
                 return ".mp4";
         }
-
-
-
     }
 }

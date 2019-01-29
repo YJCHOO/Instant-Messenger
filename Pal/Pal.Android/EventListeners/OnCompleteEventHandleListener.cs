@@ -1,6 +1,4 @@
-﻿
-
-using Android.Gms.Tasks;
+﻿using Android.Gms.Tasks;
 using System;
 
 namespace Pal.Droid.EventListeners
@@ -11,9 +9,7 @@ namespace Pal.Droid.EventListeners
 
         public OnCompleteEventHandleListener(Action<Task> completeAction) {
             _completeAction = completeAction;
-
         }
-
         public void OnComplete(Task task) => _completeAction(task);
     }
 }

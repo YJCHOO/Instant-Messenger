@@ -2,30 +2,26 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Pal.View.Authentication.AuthenticationPage">
-
+    
     <ContentPage.Content>
         <StackLayout>
             <StackLayout IsVisible="{Binding IsLoading}">
             <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" HorizontalOptions="CenterAndExpand"/>
            <Label Text="Processing"  IsVisible="{Binding IsLoading}" HorizontalOptions="CenterAndExpand"/>
             </StackLayout>
+
             <Label Text="Welcome to Pal!"
                 HorizontalOptions="CenterAndExpand" />
-
             <Entry Text="{Binding EmailText}" 
                    Placeholder="Email" 
                    HorizontalOptions="FillAndExpand"/>
-
-
             <Entry Text="{Binding PassText}" 
                    Placeholder="Password" 
                    HorizontalOptions="FillAndExpand" 
                    IsPassword="True"/>
-            
             <Button Text="Login" 
                     Command="{Binding OnLoginCommand}"
                     HorizontalOptions="Center" />
-            
             <Button Text="Register" 
                     Command="{Binding OnRegisterCommand}"
                     HorizontalOptions="Center"/>

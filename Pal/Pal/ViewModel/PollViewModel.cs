@@ -49,11 +49,15 @@ namespace Pal.ViewModel
             }
 
             OnCreatePollCommand = new Command(async() => {
+                
+
                 Option  = new ObservableCollection<SelectableData<string>>();
-                if (!_Poll.IsClose)
-                {
-                    await App.Current.MainPage.DisplayAlert("Something wrong....", "Please close this poll first. ", "Ok");
-                    return;
+                if (_Poll.PollId != null) {
+                    if (!_Poll.IsClose)
+                    {
+                        await App.Current.MainPage.DisplayAlert("Something wrong....", "Please close this poll first. ", "Ok");
+                        return;
+                    }
                 }
 
                 await App.Current.MainPage.Navigation.PushAsync( new CreatePollView(this.groupChatRoom));
@@ -88,11 +92,13 @@ namespace Pal.ViewModel
                 {
 
                     await App.Current.MainPage.DisplayAlert("Done", "Poll created", "Ok");
+                    await App.Current.MainPage.Navigation.PopAsync();
+                    await App.Current.MainPage.Navigation.PopAsync();
                 }
                 else {
                     await App.Current.MainPage.DisplayAlert("Something wrong....", "Poll Unable to create, Please try again", "Ok");
                 }
-
+                
             });
 
             OnCheckResult = new Command(async () => {
@@ -159,6 +165,8 @@ namespace Pal.ViewModel
             bool IsVoted = false;
             var TempPoll = await DependencyService.Get<IFirebaseDatabase>().GetLastestPoll(groupChatRoom.RoomID);
             _Poll = TempPoll;
+            Debug.Write(TempPoll.Title);
+            Debug.Write(_Poll.Title);
 
             foreach (string votedUser in _Poll.Result.Keys)
             {
@@ -187,7 +195,7 @@ namespace Pal.ViewModel
                 OnPropertyChanged("IsEnablePoll");
                 OnPropertyChanged("IsClosed");
             }
-
+            OnPropertyChanged("_Poll");
         }
 
         public async Task UpadateVoteResult() {

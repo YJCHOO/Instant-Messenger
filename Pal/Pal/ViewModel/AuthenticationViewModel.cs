@@ -1,10 +1,8 @@
 ﻿using Pal.Service;
-using Pal.View;
 using Pal.View.Authentication;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
 
@@ -34,7 +32,6 @@ namespace Pal.ViewModel
                     DisplayAlert();
                     return;  
                 }
-
                 try
                 {
                     OnLoading();

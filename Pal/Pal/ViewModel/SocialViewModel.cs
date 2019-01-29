@@ -107,6 +107,12 @@ namespace Pal.ViewModel
 
         public SocialViewModel(Moment _Moment) {
             OnPostCommand = new Command(async() => {
+
+                if (SendTo.Count == 0) {
+                    await App.Current.MainPage.DisplayAlert("Something wrong...", "Please select one friend to send.", "Ok");
+                    return;
+                }
+
                 IsProcessing = true;
                 OnPropertyChanged("IsProcessing");
                 var TempSelectedUser = new Dictionary<string, bool>();

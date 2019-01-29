@@ -10,13 +10,11 @@ using System.Collections.ObjectModel;
 using System;
 using System.Globalization;
 
-
 [assembly: Dependency(typeof(Pal.Droid.Service.FirebaseDatabaseConn))]
 namespace Pal.Droid.Service
 {
     class FirebaseDatabaseConn : IFirebaseDatabase
     {
-
         private const string usercollection = "users";
         private const string friendsListCollection = "friendsList";
         private const string pinBoardCollection = "pinBoard";
@@ -66,13 +64,11 @@ namespace Pal.Droid.Service
         public Task<GroupChatRoom> AddGroupChatRoom(GroupChatRoom groupChat)
         {
             TaskCompletionSource<GroupChatRoom> ResultCompletionSource = new TaskCompletionSource<GroupChatRoom>();
-            var members = new Android.Runtime.JavaDictionary<string, Java.Lang.Object>();
+            var members = new Android.Runtime.JavaDictionary<string, Java.Lang.Object>{
+                { UserSetting.UserEmail.ToLower().Replace(".", ":"), true }};
 
-            members.Add(UserSetting.UserEmail.ToLower().Replace(".", ":"), true);
-            foreach (User user in groupChat._Users)
-            {
-                members.Add(user.Email.ToLower().Replace(".", ":"), true);
-            }
+            foreach (User user in groupChat._Users){
+                members.Add(user.Email.ToLower().Replace(".", ":"), true);}
 
             var GroupChatRoom = new Dictionary<string, Java.Lang.Object> {
                 { "image", null },
@@ -80,20 +76,20 @@ namespace Pal.Droid.Service
                 {"admin",UserSetting.UserEmail.ToLower() },
                 { "users", members },
                 { "isGroup", true },
-                { "isDestruct",false}
-            };
+                { "isDestruct",false}};
 
-            Conn.Collection("roomList").Add(GroupChatRoom).AddOnCompleteListener(new OnCompleteEventHandleListener((Android.Gms.Tasks.Task task) => {
+            Conn.Collection("roomList").Add(GroupChatRoom)
+                .AddOnCompleteListener(new OnCompleteEventHandleListener((Android.Gms.Tasks.Task task) => {
                 if (task.IsSuccessful)
                 {
                     DocumentReference documentReference = (DocumentReference)task.Result;
-                    GroupChatRoom temp = new GroupChatRoom(documentReference.Id, groupChat.RoomTilte, UserSetting.UserEmail.ToLower(), groupChat._Users, false);
+                    GroupChatRoom temp = 
+                        new GroupChatRoom(documentReference.Id, groupChat.RoomTilte,
+                        UserSetting.UserEmail.ToLower(), groupChat._Users, false);
                     ResultCompletionSource.SetResult(temp);
                 }
                 else { ResultCompletionSource.SetResult(null); }
-
             }));
-
             return ResultCompletionSource.Task;
         }
         public void AddFriend(User user)
@@ -108,11 +104,9 @@ namespace Pal.Droid.Service
         }
         public Task<bool> AddPinBoardMessage(string roomID, Board boardMessage)
         {
-
             TaskCompletionSource<bool> ResultCompletionSource = new TaskCompletionSource<bool>();
             var PinBoardMessage = new Dictionary<string, Java.Lang.Object>
             {
-
                 { "roomId", roomID },
                 {"title",boardMessage.Title},
                 {"description",boardMessage.Description },
@@ -121,7 +115,6 @@ namespace Pal.Droid.Service
                 {"userName",boardMessage._User.UserName},
                 {"userEmail",boardMessage._User.Email },
                 { "dateTime",new Java.Util.Date()}
-
             };
 
             Conn.Collection(pinBoardCollection).Add(PinBoardMessage)
@@ -159,7 +152,9 @@ namespace Pal.Droid.Service
                 {
                     ResultCompletionSource.SetResult(true);
                 }
-                else { ResultCompletionSource.SetResult(false);
+                else
+                {
+                    ResultCompletionSource.SetResult(false);
                 }
             }));
             return ResultCompletionSource.Task;
@@ -395,8 +390,9 @@ namespace Pal.Droid.Service
             return ResultCompletionSource.Task;
         }
         public Task<ObservableCollection<Message>> GetMessage(string roomId) {
+            TaskCompletionSource<ObservableCollection<Message>> ResultCompletionSource = 
+                new TaskCompletionSource<ObservableCollection<Message>>();
 
-            TaskCompletionSource<ObservableCollection<Message>> ResultCompletionSource = new TaskCompletionSource<ObservableCollection<Message>>();
             ReatimeListener = Conn.Collection("messages").WhereEqualTo("roomId",roomId).OrderBy("sendDateTime")
                 .AddSnapshotListener(new EventListener((Java.Lang.Object obj, FirebaseFirestoreException exception) =>
             {
@@ -413,9 +409,10 @@ namespace Pal.Droid.Service
                                 var tempMessage = InitialMessage(documentChange.Document.Id, temp);
                                 messages.Add(tempMessage);
 
-                                if (tempMessage.IsRead != null && !tempMessage.IsRead.ContainsKey(UserSetting.UserEmail.Replace(".", ":")))
+                                if (tempMessage.IsRead != null 
+                                && 
+                                !tempMessage.IsRead.ContainsKey(UserSetting.UserEmail.Replace(".", ":")))
                                     SetRead(tempMessage);
-
                             }
                             else if (documentChange.GetType() == DocumentChange.Type.Modified)
                             {
@@ -442,15 +439,8 @@ namespace Pal.Droid.Service
                         }
                         ResultCompletionSource.TrySetResult(messages);
                     }
-                    else
-                    {
-                        ResultCompletionSource.TrySetResult(null);
-                    }
-                }
-                else {
-                    Debug.Write(exception.Message);
-                }
-              }));
+                    else{ ResultCompletionSource.TrySetResult(null);}
+                }}));
                 return ResultCompletionSource.Task;
             }
         public Task<string> GetUsername(string TempEmail)
