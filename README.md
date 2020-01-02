@@ -1,4 +1,4 @@
-# Pal
+# Pal #DEPRECATED
 
 Project has been deprecated.
 Due to Firebase library is not fully supported on Xamarin framework.
